@@ -124,7 +124,6 @@ bool MainWindow::loadFile(const QString &fileName)
    // 设置当前文件
    curFile = QFileInfo(fileName).canonicalFilePath();
    setWindowTitle(curFile);
-   qDebug()<<"The file name is: "<<curFile<<endl;
    return true;
 }
 
@@ -171,11 +170,8 @@ void MainWindow::on_action_Run_triggered()
 
     QString cmd=enterCmd+" && "+compileCmd+" && "+runCmd;
 
-    qDebug()<<"the run command is: "<<cmd<<endl;
 
-//    system("cd C:/Users/wuyan/Desktop && g++ -g first.cpp -o first.exe && first.exe");
     system(cmd.toStdString().c_str());
-    qDebug()<<"The end of run command"<<endl;
 }
 
 void MainWindow::on_action_Compile_triggered()
@@ -190,14 +186,12 @@ void MainWindow::on_action_Compile_triggered()
     else if(QString::compare(suffix,"c")==0)
         prefix="gcc";
     else {
-        throw("FILE_SUFFIX_ERROR");
+        throw "FILE_SUFFIX_ERROR";
     }
 
     QString enterCmd="cd /d "+dirName;
     QString compileCmd=prefix+" -g "+fullName+" -o "+baseName+".exe";
     QString cmd=enterCmd+" && "+compileCmd;
-    qDebug()<<"the compiling command is: "<<cmd<<endl;
 
     system(cmd.toStdString().c_str());
-    qDebug()<<"The end"<<endl;
 }
