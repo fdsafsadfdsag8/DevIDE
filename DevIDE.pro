@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        codeeditor.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        codeeditor.h \
         mainwindow.h
 
 FORMS += \
