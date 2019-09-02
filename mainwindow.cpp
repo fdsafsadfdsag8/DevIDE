@@ -192,6 +192,6 @@ void MainWindow::on_action_Compile_triggered()
     QString enterCmd="cd /d "+dirName;
     QString compileCmd=prefix+" -g "+fullName+" -o "+baseName+".exe";
     QString cmd=enterCmd+" && "+compileCmd;
-
+    save();
     system(cmd.toStdString().c_str());
 }
