@@ -27,7 +27,8 @@ CONFIG += c++11
 SOURCES += \
         codeeditor.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        text.cpp
 
 HEADERS += \
         codeeditor.h \

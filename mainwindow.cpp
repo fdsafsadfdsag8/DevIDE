@@ -5,6 +5,7 @@
 #include<QFileDialog>
 #include<QTextStream>
 #include<QDebug>
+#include<QTreeWidget>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -13,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     isUntitled=true;
     curFile=tr("未命名.txt");
     setWindowTitle(curFile);
+
+    this->resize(QSize(800,500));//修改初始化窗口大小
+
+    connect(ui->treeWidget,SIGNAL(itemdoubleClicked ( const QTreeWidgetItem*,int)),this,SLOT(treewidgetDoubleClick(const QTreeWidgetItem*,int)));
 }
 
 MainWindow::~MainWindow()
@@ -26,6 +31,7 @@ void MainWindow::newFile(){
         curFile=tr("未命名.txt");
         setWindowTitle(curFile);
         ui->textEdit->clear();
+        ui->treeWidget->clear();//清空
         ui->textEdit->setVisible(true);
     }
 }
@@ -87,6 +93,9 @@ bool MainWindow::saveFile(const QString &fileName){
 
     curFile=QFileInfo(fileName).canonicalFilePath();
     setWindowTitle(curFile);
+
+    loadtree(fileName);//保存之后加载目录树
+
     return true;
 }
 
@@ -127,8 +136,7 @@ bool MainWindow::loadFile(const QString &fileName)
    return true;
 }
 
-
-void MainWindow::on_action_Open_triggered()
+void MainWindow::on_action_open_file_triggered()
 {
     if (maybeSave()) {
 
@@ -138,6 +146,22 @@ void MainWindow::on_action_Open_triggered()
         if (!fileName.isEmpty()) {
              loadFile(fileName);
              ui->textEdit->setVisible(true);
+             loadtree(fileName);
+        }
+    }
+}
+
+void MainWindow::on_action_open_files_triggered()
+{
+    if (maybeSave()) {
+
+        QString directoryName = QFileDialog::getExistingDirectory(this,tr("选择文件夹"),".");
+
+        if (!directoryName.isEmpty()){
+            ui->textEdit->clear();
+            ui->textEdit->setVisible(false);
+            loadtree(directoryName);
+            qDebug() << directoryName;//输出
         }
     }
 }
@@ -170,7 +194,6 @@ void MainWindow::on_action_Run_triggered()
 
     QString cmd=enterCmd+" && "+compileCmd+" && "+runCmd;
 
-
     system(cmd.toStdString().c_str());
 }
 
@@ -195,3 +218,80 @@ void MainWindow::on_action_Compile_triggered()
     save();
     system(cmd.toStdString().c_str());
 }
+
+
+void MainWindow::loadtree(const QString &fileName){//加载当前文件的目录树
+
+    ui->treeWidget->clear();//先清空之前的内容
+    //创建目录根项
+    //QString rootpath=QFileInfo(fileName).path();//获取绝对路径如"F:/qt/homework"    调用这个函数会让文件夹向上一级
+    QString rootpath=fileName;
+    qDebug() << rootpath;
+    /*获取文件名以及路径
+    QString file_full, file_name, file_path;
+    QFileInfo fi;
+    file_full = QFileDialog::getOpenFileName(this);
+    fi = QFileInfo(file_full);
+    file_name = fi.fileName();
+    file_path = fi.absolutePath();
+    */
+    QTreeWidgetItem* root = new QTreeWidgetItem(QStringList()<<rootpath);
+    //root->setIcon(0, QIcon(":/file/image/link.ico"));
+    root->setCheckState(1, Qt::Checked);
+    allfile(root,rootpath);//遍历添加home目录下所有文件
+}
+
+QFileInfoList MainWindow::allfile(QTreeWidgetItem *root,QString path)//参数为主函数中添加的item和路径名
+{
+    ui->treeWidget->addTopLevelItem(root);
+
+    /*添加path路径文件*/
+    QDir dir(path);//遍历各级子目录
+    QDir dir_file(path);//遍历子目录中所有文件
+    dir_file.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);//获取当前所有文件
+    dir_file.setSorting(QDir::Size | QDir::Reversed);
+    QFileInfoList list_file = dir_file.entryInfoList();
+    for (int i = 0; i < list_file.size(); ++i) {//将当前目录中所有文件添加到treewidget中
+        QFileInfo fileInfo = list_file.at(i);
+        QString name2=fileInfo.fileName();
+        QTreeWidgetItem* child = new QTreeWidgetItem(QStringList()<<name2);
+        //child->setIcon(0, QIcon(":/file/image/link.ico"));
+        child->setCheckState(1, Qt::Checked);
+        root->addChild(child);
+    }
+
+    QFileInfoList file_list=dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
+    QFileInfoList folder_list = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);//获取当前所有目录
+
+    for(int i = 0; i != folder_list.size(); i++)//自动递归添加各目录到上一级目录
+    {
+             QString namepath = folder_list.at(i).absoluteFilePath();//获取路径
+             QFileInfo folderinfo= folder_list.at(i);
+             QString name=folderinfo.fileName();//获取目录名
+             QTreeWidgetItem* childroot = new QTreeWidgetItem(QStringList()<<name);
+             //childroot->setIcon(0, QIcon(":/file/image/link.ico"));
+             childroot->setCheckState(1, Qt::Checked);
+             root->addChild(childroot);//将当前目录添加成path的子项
+             QFileInfoList child_file_list = allfile(childroot,namepath);//进行递归
+             file_list.append(child_file_list);
+             file_list.append(name);
+     }
+    return file_list;
+}
+
+void MainWindow::treewidgetDoubleClick(const QTreeWidgetItem * item,int col){
+    QTreeWidgetItem *parent = item->parent();
+    if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
+        return;
+    //int c = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
+    //if(0==c) //Band1
+    {
+       //执行对应操作
+    }
+    //if(1==c) //Band2
+    {
+        //执行对应操作
+    }
+}
+
+
