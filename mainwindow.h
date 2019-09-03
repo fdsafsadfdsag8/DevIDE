@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTreeWidget>
+#include <QFileInfoList>
 
 namespace Ui {
 class MainWindow;
@@ -23,10 +25,11 @@ public:
     bool saveFile(const QString& fileName);//保存文件
     bool loadFile(const QString &fileName); // 加载文件
 
+    QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
+    void loadtree(const QString &fileName);//显示目录树
+
 private slots:
     void on_action_New_triggered();
-
-    void on_action_Open_triggered();
 
     void on_action_Save_triggered();
 
@@ -37,6 +40,13 @@ private slots:
     void on_action_Run_triggered();
 
     void on_action_Compile_triggered();
+
+    void on_action_open_file_triggered();//打开单个文件
+
+    void on_action_open_files_triggered();//打开文件夹
+
+    void treewidgetDoubleClick(const QTreeWidgetItem * item,int col);//双击目录树中的文件显示文件内容
+
 
 private:
     Ui::MainWindow *ui;
