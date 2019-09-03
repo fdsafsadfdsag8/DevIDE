@@ -12,6 +12,9 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
     connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
     connect(this, &CodeEditor::cursorPositionChanged, this, &CodeEditor::highlightCurrentLine);
 
+    QFontMetrics metrics(this->font());
+    this->setTabStopWidth(this->tabStop * metrics.width(' '));
+
     updateLineNumberAreaWidth(0);
     highlightCurrentLine();
 }

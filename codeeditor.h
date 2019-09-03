@@ -33,6 +33,7 @@ private slots:
 
 private:
     QWidget *lineNumberArea;
+    const int tabStop=6;
 };
 
 
