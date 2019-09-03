@@ -14,16 +14,40 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>381</width>
-      <height>241</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="1,5">
+    <item row="0" column="1">
+     <widget class="CodeEditor" name="textEdit">
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QTreeWidget" name="treeWidget">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="columnCount">
+       <number>1</number>
+      </property>
+      <column>
+       <property name="text">
+        <string>项目</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -31,15 +55,22 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>17</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_F">
     <property name="title">
      <string>文件(&amp;F)</string>
     </property>
+    <widget class="QMenu" name="menu_O">
+     <property name="title">
+      <string>打开(&amp;O)</string>
+     </property>
+     <addaction name="action_open_files"/>
+     <addaction name="action_open_file"/>
+    </widget>
     <addaction name="action_New"/>
-    <addaction name="action_Open"/>
+    <addaction name="menu_O"/>
     <addaction name="action_Close"/>
     <addaction name="separator"/>
     <addaction name="action_Save"/>
@@ -171,17 +202,6 @@
     <string>Ctrl+H</string>
    </property>
   </action>
-  <action name="action_Open">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>打开(&amp;O)</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-  </action>
   <action name="action_Run">
    <property name="text">
     <string>运行(&amp;R)</string>
@@ -198,8 +218,25 @@
     <string>Ctrl+F5</string>
    </property>
   </action>
+  <action name="action_open_files">
+   <property name="text">
+    <string>打开文件夹</string>
+   </property>
+  </action>
+  <action name="action_open_file">
+   <property name="text">
+    <string>打开单个文件</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header location="global">codeeditor.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
