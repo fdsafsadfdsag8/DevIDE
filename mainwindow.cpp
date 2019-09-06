@@ -14,19 +14,11 @@ MainWindow::MainWindow(QWidget *parent) :
     isUntitled=true;
     curFile=tr("未命名.txt");
     setWindowTitle(curFile);
-<<<<<<< HEAD
 
     this->resize(QSize(800,500));//修改初始化窗口大小
 
-    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
+    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
 
-||||||| merged common ancestors
-=======
-
-    this->resize(QSize(800,500));//修改初始化窗口大小
-
-    connect(ui->treeWidget,SIGNAL(itemdoubleClicked ( const QTreeWidgetItem*,int)),this,SLOT(treewidgetDoubleClick(const QTreeWidgetItem*,int)));
->>>>>>> upstream/dev
 }
 
 MainWindow::~MainWindow()
@@ -228,7 +220,6 @@ void MainWindow::on_action_Compile_triggered()
     save();
     system(cmd.toStdString().c_str());
 }
-<<<<<<< HEAD
 
 
 void MainWindow::loadtree(const QString &fileName){//加载当前文件的目录树
@@ -338,85 +329,3 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
         current_url=url;
 }
 
-
-||||||| merged common ancestors
-=======
-
-
-void MainWindow::loadtree(const QString &fileName){//加载当前文件的目录树
-
-    ui->treeWidget->clear();//先清空之前的内容
-    //创建目录根项
-    //QString rootpath=QFileInfo(fileName).path();//获取绝对路径如"F:/qt/homework"    调用这个函数会让文件夹向上一级
-    QString rootpath=fileName;
-    qDebug() << rootpath;
-    /*获取文件名以及路径
-    QString file_full, file_name, file_path;
-    QFileInfo fi;
-    file_full = QFileDialog::getOpenFileName(this);
-    fi = QFileInfo(file_full);
-    file_name = fi.fileName();
-    file_path = fi.absolutePath();
-    */
-    QTreeWidgetItem* root = new QTreeWidgetItem(QStringList()<<rootpath);
-    //root->setIcon(0, QIcon(":/file/image/link.ico"));
-    root->setCheckState(1, Qt::Checked);
-    allfile(root,rootpath);//遍历添加home目录下所有文件
-}
-
-QFileInfoList MainWindow::allfile(QTreeWidgetItem *root,QString path)//参数为主函数中添加的item和路径名
-{
-    ui->treeWidget->addTopLevelItem(root);
-
-    /*添加path路径文件*/
-    QDir dir(path);//遍历各级子目录
-    QDir dir_file(path);//遍历子目录中所有文件
-    dir_file.setFilter(QDir::Files | QDir::Hidden | QDir::NoSymLinks);//获取当前所有文件
-    dir_file.setSorting(QDir::Size | QDir::Reversed);
-    QFileInfoList list_file = dir_file.entryInfoList();
-    for (int i = 0; i < list_file.size(); ++i) {//将当前目录中所有文件添加到treewidget中
-        QFileInfo fileInfo = list_file.at(i);
-        QString name2=fileInfo.fileName();
-        QTreeWidgetItem* child = new QTreeWidgetItem(QStringList()<<name2);
-        //child->setIcon(0, QIcon(":/file/image/link.ico"));
-        child->setCheckState(1, Qt::Checked);
-        root->addChild(child);
-    }
-
-    QFileInfoList file_list=dir.entryInfoList(QDir::Files | QDir::Hidden | QDir::NoSymLinks);
-    QFileInfoList folder_list = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);//获取当前所有目录
-
-    for(int i = 0; i != folder_list.size(); i++)//自动递归添加各目录到上一级目录
-    {
-             QString namepath = folder_list.at(i).absoluteFilePath();//获取路径
-             QFileInfo folderinfo= folder_list.at(i);
-             QString name=folderinfo.fileName();//获取目录名
-             QTreeWidgetItem* childroot = new QTreeWidgetItem(QStringList()<<name);
-             //childroot->setIcon(0, QIcon(":/file/image/link.ico"));
-             childroot->setCheckState(1, Qt::Checked);
-             root->addChild(childroot);//将当前目录添加成path的子项
-             QFileInfoList child_file_list = allfile(childroot,namepath);//进行递归
-             file_list.append(child_file_list);
-             file_list.append(name);
-     }
-    return file_list;
-}
-
-void MainWindow::treewidgetDoubleClick(const QTreeWidgetItem * item,int col){
-    QTreeWidgetItem *parent = item->parent();
-    if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
-        return;
-    //int c = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
-    //if(0==c) //Band1
-    {
-       //执行对应操作
-    }
-    //if(1==c) //Band2
-    {
-        //执行对应操作
-    }
-}
-
-
-
->>>>>>> upstream/dev
