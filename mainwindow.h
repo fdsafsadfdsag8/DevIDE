@@ -16,6 +16,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
+    QString current_url;//当前打开文件夹路径
+
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void newFile();				//新建
@@ -27,6 +30,9 @@ public:
 
     QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
     void loadtree(const QString &fileName);//显示目录树
+
+signals:
+    void itemClicked ( QTreeWidgetItem * item, int column );//发射鼠标点击信号
 
 private slots:
     void on_action_New_triggered();
@@ -45,7 +51,7 @@ private slots:
 
     void on_action_open_files_triggered();//打开文件夹
 
-    void treewidgetDoubleClick(const QTreeWidgetItem * item,int col);//双击目录树中的文件显示文件内容
+    void showSelectedDocument(QTreeWidgetItem * item, int column); //双击目录树中的文件显示文件内容事件
 
 
 private:
