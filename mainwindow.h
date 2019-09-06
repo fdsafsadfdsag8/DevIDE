@@ -28,12 +28,19 @@ public:
     bool saveFile(const QString& fileName);//保存文件
     bool loadFile(const QString &fileName); // 加载文件
 
+<<<<<<< HEAD
     QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
     void loadtree(const QString &fileName);//显示目录树
 
 signals:
     void itemClicked ( QTreeWidgetItem * item, int column );//发射鼠标点击信号
 
+||||||| merged common ancestors
+=======
+    QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
+    void loadtree(const QString &fileName);//显示目录树
+
+>>>>>>> upstream/dev
 private slots:
     void on_action_New_triggered();
 
@@ -47,6 +54,7 @@ private slots:
 
     void on_action_Compile_triggered();
 
+<<<<<<< HEAD
     void on_action_open_file_triggered();//打开单个文件
 
     void on_action_open_files_triggered();//打开文件夹
@@ -54,6 +62,16 @@ private slots:
     void showSelectedDocument(QTreeWidgetItem * item, int column); //双击目录树中的文件显示文件内容事件
 
 
+||||||| merged common ancestors
+=======
+    void on_action_open_file_triggered();//打开单个文件
+
+    void on_action_open_files_triggered();//打开文件夹
+
+    void treewidgetDoubleClick(const QTreeWidgetItem * item,int col);//双击目录树中的文件显示文件内容
+
+
+>>>>>>> upstream/dev
 private:
     Ui::MainWindow *ui;
     //为真：未保存过；为假：保存过
