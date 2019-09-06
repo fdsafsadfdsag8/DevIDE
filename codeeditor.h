@@ -2,6 +2,7 @@
 #define CODEEDITOR_H
 
 #include <QPlainTextEdit>
+#include"highlighter.h"
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -33,6 +34,9 @@ private slots:
 
 private:
     QWidget *lineNumberArea;
+    const int tabStop=6;
+    Highlighter * highlighter;
+    void setHighlight();
 };
 
 
@@ -54,6 +58,7 @@ protected:
 
 private:
     CodeEditor *codeEditor;
+
 };
 
 #endif // CODEEDITOR_H
