@@ -25,25 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-<<<<<<< HEAD
-        codeeditor.cpp \
-||||||| merged common ancestors
-=======
         codeeditor.cpp \
         highlighter.cpp \
->>>>>>> upstream/dev
         main.cpp \
-        mainwindow.cpp \
-        text.cpp
+        mainwindow.cpp
 
 HEADERS += \
-<<<<<<< HEAD
-        codeeditor.h \
-||||||| merged common ancestors
-=======
         codeeditor.h \
         highlighter.h \
->>>>>>> upstream/dev
         mainwindow.h
 
 FORMS += \

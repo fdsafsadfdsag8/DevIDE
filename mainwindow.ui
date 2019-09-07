@@ -14,53 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-<<<<<<< HEAD
-   <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="1,5">
-    <item row="0" column="1">
-     <widget class="CodeEditor" name="textEdit">
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QTreeWidget" name="treeWidget">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
-      <property name="columnCount">
-       <number>1</number>
-      </property>
-      <column>
-       <property name="text">
-        <string>项目</string>
-       </property>
-      </column>
-     </widget>
-    </item>
-   </layout>
-||||||| merged common ancestors
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>381</width>
-      <height>241</height>
-     </rect>
-    </property>
-   </widget>
-=======
 
    <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="1,5">
     <item row="0" column="1">
@@ -97,7 +50,7 @@
 
     </item>
    </layout>
->>>>>>> upstream/dev
+
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

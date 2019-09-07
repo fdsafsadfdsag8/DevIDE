@@ -17,15 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->resize(QSize(800,500));//修改初始化窗口大小
 
-<<<<<<< HEAD
+
     connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
 
-||||||| merged common ancestors
-    connect(ui->treeWidget,SIGNAL(itemdoubleClicked ( const QTreeWidgetItem*,int)),this,SLOT(treewidgetDoubleClick(const QTreeWidgetItem*,int)));
-=======
-    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
-
->>>>>>> upstream/master
+    QT
 }
 
 MainWindow::~MainWindow()
@@ -293,104 +288,102 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
 
     QString url = current_url;//保存最初始的url
     QTreeWidgetItem *parent = item->parent();
-<<<<<<< HEAD
-||||||| merged common ancestors
-    if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
+
+    int count=0;//以'/'分开的路径个数;
+    QStringList name_list;
+
+    //QTreeWidgetItem *item_current = ui->treeWidget->currentItem();//获取当前item
+
+        if(parent==NULL) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
+            return;
+        else {//从叶子倒着获取路径
+            QTreeWidgetItem *parent_current=parent;
+            QTreeWidgetItem *item_current=item;
+            while(parent_current!=NULL){
+                name_list.append(item_current->text(0));
+                //name_list[count]=item_current->text(0);//这样会报错
+                count++;
+                parent_current = item_current->parent();
+                item_current=parent_current;
+                qDebug()<< name_list[count-1];
+            }
+        }
+        for(int i=count-2;i>=0;i--){//倒着得到正确的路径
+            current_url+='/';
+            current_url+=name_list[i];
+        }
+        //int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
+
+        if (maybeSave()) {
+
+            QString fileurl = current_url;
+            //qDebug()<< fileName;
+            //qDebug()<< col;
+            //qDebug()<< (item->text(0));//只有item->text(0)才能获取当前item的文件名
+
+            // 如果文件名不为空，则加载文件
+            if (!fileurl.isEmpty()) {
+                 loadFile(fileurl);
+                 ui->textEdit->setVisible(true);
+                 //loadtree(fileName);
+            }
+        }
+        current_url=url;
+}
+
+
+//创建新的Tab（用于打开文件）
+void MainWindow::newTab(const QString& fileName, QFile& file)
+{
+    int index = 0;
+    NotePad *notePad = findNewFile(index);
+    if(notePad == NULL)
+    {
+        notePad = new NotePad(config);
+        index = tabWidget->addTab(notePad, QFileInfo(fileName).fileName());
+        addToNotePadMap(index, notePad);
+    }
+    else
+    {
+        notePad->SetNewFile(false);
+        tabWidget->setTabText(index, QFileInfo(fileName).fileName());
+        openedFiles.removeAt(index);
+        newNumber--;
+    }
+    openedFiles << fileName;
+    QByteArray data = file.readAll();
+    notePad->setPlainText(QString::fromLocal8Bit(data));
+    tabWidget->setCurrentIndex(index);
+    setWindowTitle(QFileInfo(fileName).fileName());
+}
+
+//关闭文件（指定文件）
+void MainWindow::fileClose(int index)
+{
+    if(!shouldCloseFile())
+    {
         return;
-    //int c = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
-    //if(0==c) //Band1
-    {
-       //执行对应操作
     }
-    //if(1==c) //Band2
+
+    if (maybeSave(index))
     {
-        //执行对应操作
+        if (openedFiles.count() == 1)
+        {
+            openedFiles.clear();
+            QString fileName = "New 1";
+            openedFiles << fileName;
+            mapNotePads[0]->setPlainText("");
+            mapNotePads[0]->SetNewFile(true);
+            tabWidget->setTabText(0, fileName);
+            setWindowTitle(fileName);
+            newNumber = 1;
+        }
+        else
+        {
+            openedFiles.removeAt(index);
+            tabWidget->removeTab(index);
+            removeFromNotePadMap(index);
+            newNumber--;
+        }
     }
 }
-=======
-
-    int count=0;//以'/'分开的路径个数;
-    QStringList name_list;
-
-    //QTreeWidgetItem *item_current = ui->treeWidget->currentItem();//获取当前item
-
-        if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
-            return;
-        else {//从叶子倒着获取路径
-            QTreeWidgetItem *parent_current=parent;
-            QTreeWidgetItem *item_current=item;
-            while(NULL!=parent_current){
-                name_list.append(item_current->text(0));
-                //name_list[count]=item_current->text(0);//这样会报错
-                count++;
-                parent_current = item_current->parent();
-                item_current=parent_current;
-                qDebug()<< name_list[count-1];
-            }
-        }
-        for(int i=count-2;i>=0;i--){//倒着得到正确的路径
-            current_url+='/';
-            current_url+=name_list[i];
-        }
-        int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
-
-        if (maybeSave()) {
-
-            QString fileurl = current_url;
-            //qDebug()<< fileName;
-            //qDebug()<< col;
-            //qDebug()<< (item->text(0));//只有item->text(0)才能获取当前item的文件名
-
-            // 如果文件名不为空，则加载文件
-            if (!fileurl.isEmpty()) {
-                 loadFile(fileurl);
-                 ui->textEdit->setVisible(true);
-                 //loadtree(fileName);
-            }
-        }
-        current_url=url;
-}
->>>>>>> upstream/master
-
-    int count=0;//以'/'分开的路径个数;
-    QStringList name_list;
-
-    //QTreeWidgetItem *item_current = ui->treeWidget->currentItem();//获取当前item
-
-        if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
-            return;
-        else {//从叶子倒着获取路径
-            QTreeWidgetItem *parent_current=parent;
-            QTreeWidgetItem *item_current=item;
-            while(NULL!=parent_current){
-                name_list.append(item_current->text(0));
-                //name_list[count]=item_current->text(0);//这样会报错
-                count++;
-                parent_current = item_current->parent();
-                item_current=parent_current;
-                qDebug()<< name_list[count-1];
-            }
-        }
-        for(int i=count-2;i>=0;i--){//倒着得到正确的路径
-            current_url+='/';
-            current_url+=name_list[i];
-        }
-        int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
-
-        if (maybeSave()) {
-
-            QString fileurl = current_url;
-            //qDebug()<< fileName;
-            //qDebug()<< col;
-            //qDebug()<< (item->text(0));//只有item->text(0)才能获取当前item的文件名
-
-            // 如果文件名不为空，则加载文件
-            if (!fileurl.isEmpty()) {
-                 loadFile(fileurl);
-                 ui->textEdit->setVisible(true);
-                 //loadtree(fileName);
-            }
-        }
-        current_url=url;
-}
-
