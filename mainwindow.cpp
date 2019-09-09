@@ -6,6 +6,11 @@
 #include<QTextStream>
 #include<QDebug>
 #include<QTreeWidget>
+#include<QTabBar>
+#include<QCompleter>
+#include<QFile>
+#include<QString>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -18,6 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     this->resize(QSize(800,500));//修改初始化窗口大小
 
     connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
+
+    //my_tab->setShape(QTabBar::TriangularNorth);//设置显示样式
+    //splitter();
+    ui->splitter->setStretchFactor(0, 1);//初始左边占1/6
+    ui->splitter->setStretchFactor(1, 5);//初始右边占5/6
 
 }
 
@@ -323,11 +333,24 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
             if (!fileurl.isEmpty()) {
                  loadFile(fileurl);
                  ui->textEdit->setVisible(true);
-                 //loadtree(fileName);
             }
         }
         current_url=url;
 }
+
+/*
+void MainWindow::splitter(){
+    QSplitter * mainSplitter = new QSplitter(Qt::Horizontal,ui->centralWidget);
+    mainSplitter->setHandleWidth(3);//设置分割条宽度
+    mainSplitter->setStyleSheet("QSplitter::handle { background-color: black }"); //设置分界线的样式
+
+    mainSplitter->addWidget(ui->treeWidget);
+    mainSplitter->addWidget(ui->textEdit);
+    mainSplitter->setOrientation(Qt::Vertical);//指定子窗件按加载顺序进行指定方向排列
+    mainSplitter->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    mainSplitter->show();
+}
+*/
 
 
 
