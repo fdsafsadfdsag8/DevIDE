@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTreeWidget>
 #include <QFileInfoList>
+#include <QTabBar>
+#include <QSplitter>
 
 namespace Ui {
 class MainWindow;
@@ -18,6 +20,7 @@ class MainWindow : public QMainWindow
 public:
 
     QString current_url;//当前打开文件夹路径
+    QTabBar *my_tab=new QTabBar(this);//创建tabbar
 
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -30,6 +33,8 @@ public:
 
     QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
     void loadtree(const QString &fileName);//显示目录树
+
+    void splitter();//分割窗体
 
 signals:
     void itemClicked ( QTreeWidgetItem * item, int column );//发射鼠标点击信号
