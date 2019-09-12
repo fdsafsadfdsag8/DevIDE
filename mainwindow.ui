@@ -139,10 +139,18 @@
     <addaction name="action_Run"/>
     <addaction name="action_Compile"/>
    </widget>
+   <widget class="QMenu" name="menu_P">
+    <property name="title">
+     <string>显示/隐藏(P)</string>
+    </property>
+    <addaction name="action_visible"/>
+    <addaction name="action_unvisible"/>
+   </widget>
    <addaction name="menu_F"/>
    <addaction name="menu_E"/>
    <addaction name="menu_D"/>
    <addaction name="menu_H"/>
+   <addaction name="menu_P"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -273,6 +281,16 @@
   <action name="action_open_file">
    <property name="text">
     <string>打开单个文件</string>
+   </property>
+  </action>
+  <action name="action_visible">
+   <property name="text">
+    <string>显示</string>
+   </property>
+  </action>
+  <action name="action_unvisible">
+   <property name="text">
+    <string>隐藏</string>
    </property>
   </action>
  </widget>

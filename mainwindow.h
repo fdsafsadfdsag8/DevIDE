@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -6,12 +6,16 @@
 #include <QFileInfoList>
 #include <QTabBar>
 #include <QSplitter>
+#include <QDialog>
+#include <QTextDocument>
 
 namespace Ui {
 class MainWindow;
 }
 
-
+class QLineEdit;
+class QDialog;
+class QCheckBox;
 
 class MainWindow : public QMainWindow
 {
@@ -58,6 +62,12 @@ private slots:
 
     void showSelectedDocument(QTreeWidgetItem * item, int column); //双击目录树中的文件显示文件内容事件
 
+    void showFindText();//与查找信号连接的槽
+    void on_action_Find_triggered();//与点击查找按钮或快捷键信号连接的槽
+
+    void on_action_visible_triggered();//注释的显示
+    void on_action_unvisible_triggered();//注释的隐藏
+
 
 private:
     Ui::MainWindow *ui;
@@ -65,6 +75,26 @@ private:
     bool isUntitled;
     //保存当前文件的路径
     QString curFile;
+
+    QLineEdit *findLineEdit;
+    QDialog *findDlg;
+
+    QCheckBox *FindBack_CheckBox;//从后往前查找
+    QCheckBox *FindWhole_CheckBox;//全词匹配
+    QCheckBox *FindCase_CheckBox;//区分大小写
+
+    QStringList zhushi;//存删掉的行注释(这一行还有代码)
+    QStringList daima;//存删掉的行注释这一行的代码
+    int zhushi_hang[2000];//存对应行注释的行数(限定2000行)
+    int size=0;//数组大小
+
+    QStringList text;//用于重写文件
+    int row_num;//行数
+
+    QTextDocument *document;
+
+    int row;//记录隐藏掉的行数
+
 };
 
 #endif // MAINWINDOW_H

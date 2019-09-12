@@ -10,6 +10,11 @@
 #include<QCompleter>
 #include<QFile>
 #include<QString>
+#include<QLineEdit>
+#include<QDialog>
+#include<QPushButton>
+#include<QtGui>
+#include<QCheckBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +34,36 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitter->setStretchFactor(0, 1);//初始左边占1/6
     ui->splitter->setStretchFactor(1, 5);//初始右边占5/6
 
+
+    //查找功能
+    findDlg = new QDialog(this);//创建一个对话框
+    findDlg->setWindowTitle(tr("查找"));
+    findLineEdit = new QLineEdit(findDlg);
+    QPushButton *btn= new QPushButton(tr("查找下一个"), findDlg);
+
+    FindBack_CheckBox=new QCheckBox(tr("从后往前查找"));//从后往前查找
+    FindWhole_CheckBox=new QCheckBox(tr("全词匹配"));//全词匹配
+    FindCase_CheckBox=new QCheckBox(tr("区分大小写"));//区分大小写
+/*
+    QHBoxLayout *layout_0= new QHBoxLayout(findDlg);//将check框放在一起，水平排列
+    layout_0->addWidget(FindBack_CheckBox);
+    layout_0->addWidget(FindWhole_CheckBox);
+    layout_0->addWidget(FindCase_CheckBox);
+    */
+
+    QVBoxLayout *layout_2= new QVBoxLayout(findDlg);//将一个行编辑器和一个按钮放到上面，并使用布局管理器进行布局。
+    layout_2->addWidget(findLineEdit);
+    layout_2->addWidget(FindBack_CheckBox);
+    layout_2->addWidget(FindWhole_CheckBox);
+    layout_2->addWidget(FindCase_CheckBox);
+    layout_2->addWidget(btn);
+    findDlg->setLayout(layout_2);
+
+    connect(btn, SIGNAL(clicked()), this, SLOT(showFindText()));//将按钮的单击信号关联到自定义的显示查找到的文本槽上
+
+    document=ui->textEdit->document();//将文本编辑区转为QTextDocument对象
+    row_num=document->lineCount();//获取行数
+    row=0;
 }
 
 MainWindow::~MainWindow()
@@ -128,7 +163,7 @@ void MainWindow::on_action_SaveAs_triggered()
 
 bool MainWindow::loadFile(const QString &fileName)
 {
-    ui->textEdit->clear();//清空上一次打开的东西
+   ui->textEdit->clear();//清空上一次打开的东西
    QFile file(fileName); // 新建QFile对象
    if (!file.open(QFile::ReadOnly | QFile::Text)) {
        QMessageBox::warning(this, tr("多文档编辑器"),
@@ -302,12 +337,12 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
 
     //QTreeWidgetItem *item_current = ui->treeWidget->currentItem();//获取当前item
 
-        if(NULL==parent) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
+        if(parent==NULL) //注意：最顶端项是没有父节点的，双击这些项时注意(陷阱)
             return;
         else {//从叶子倒着获取路径
             QTreeWidgetItem *parent_current=parent;
             QTreeWidgetItem *item_current=item;
-            while(NULL!=parent_current){
+            while(parent_current!=NULL){
                 name_list.append(item_current->text(0));
                 //name_list[count]=item_current->text(0);//这样会报错
                 count++;
@@ -320,7 +355,7 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
             current_url+='/';
             current_url+=name_list[i];
         }
-        int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
+        //int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
 
         if (maybeSave()) {
 
@@ -338,6 +373,205 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
         current_url=url;
 }
 
+void MainWindow::showFindText()//在当前打开文本中查找
+{
+    QString str = findLineEdit->text();//获取行编辑器中要查找的字符串
+
+    if(FindBack_CheckBox->isChecked()){
+        if(FindWhole_CheckBox->isChecked()){
+            if(FindCase_CheckBox->isChecked()){
+                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                   QMessageBox::warning(this, tr("查找"),
+                            tr("找不到%1").arg(str));
+                }
+            }
+            else{
+                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                   QMessageBox::warning(this, tr("查找"),
+                            tr("找不到%1").arg(str));
+                }
+            }
+        }
+        else if(FindCase_CheckBox->isChecked()){
+                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                    QMessageBox::warning(this, tr("查找"),
+                        tr("找不到%1").arg(str));
+                }
+            }
+            else{
+                if (!ui->textEdit->find(str,QTextDocument::FindBackward))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                   QMessageBox::warning(this, tr("查找"),
+                            tr("找不到%1").arg(str));
+                }
+            }
+
+    }
+    else if(FindWhole_CheckBox->isChecked()){
+            if(FindCase_CheckBox->isChecked()){
+                if (!ui->textEdit->find(str,QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                    QMessageBox::warning(this, tr("查找"),
+                        tr("找不到%1").arg(str));
+                }
+            }
+            else{
+                if (!ui->textEdit->find(str,QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                    QMessageBox::warning(this, tr("查找"),
+                        tr("找不到%1").arg(str));
+                }
+            }
+        }
+        else if(FindCase_CheckBox->isChecked()){
+                if (!ui->textEdit->find(str,QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                    QMessageBox::warning(this, tr("查找"),
+                        tr("找不到%1").arg(str));
+                }
+            }
+            else{
+                if (!ui->textEdit->find(str))//用来指定查找的方式。可以使用“|”符号来一起使用
+                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                    QMessageBox::warning(this, tr("查找"),
+                        tr("找不到%1").arg(str));
+                }
+            }
+}
+
+void MainWindow::on_action_Find_triggered()//显示查找框
+{
+   findDlg->show();
+   findDlg->setMinimumSize(320,235);
+}
+
+void MainWindow::on_action_visible_triggered()
+{
+    int j=0;
+    for(int i=0;i<row_num;i++){//显示每一行
+        //qDebug()<<i;
+        QTextBlock oTextBlock = document->findBlockByNumber(i);
+        oTextBlock.setVisible(true);
+        for(;j<size;){//找到行注释和代码同时存在的一行，将行注释添加回去
+            qDebug()<<zhushi_hang[j];
+            if(i==zhushi_hang[j]){
+                QString str="";
+                str=daima[j]+zhushi[j];
+                //将光标跳到指定行
+                QTextCursor tc = ui->textEdit->textCursor();
+                int toPost =document->findBlockByNumber(i).position();
+                tc.setPosition(toPost,QTextCursor::MoveAnchor);
+                ui->textEdit->setTextCursor(tc);
+                //删除光标所在行
+                tc.select(QTextCursor::BlockUnderCursor);
+                tc.removeSelectedText();
+                ui->textEdit->insertPlainText("\n"+str);
+
+                text.append(str);
+                j++;
+                break;
+            }
+            else{
+                text.append(document->findBlockByLineNumber(i).text());//存到list中,用于之后的重写
+                break;
+            }
+        }
+    }
+
+    //重写文件
+    QString file= text.join("\n");//将QStringlist转化为QString
+
+    //清空注释list和对应的int数组
+    zhushi.clear();
+    size=0;
+
+    /*调整与更新！！！！超重要！！！*/
+    document->adjustSize();
+    ui->textEdit->update();
+}
+
+void MainWindow::on_action_unvisible_triggered()
+{
+    document = ui->textEdit->document();//将文本编辑区转为QTextDocument对象
+    row_num=document->lineCount();//获取行数
+    qDebug()<<row_num;
+
+    for(int i=0;i<row_num;i++){
+        QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
+
+        if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
+            int j=i;
+            for(;j<row_num;j++){
+                QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
+                if(str_j.contains("*/")){
+                    break;
+                }
+            }
+            i=j;
+            continue;
+        }
+        QString cur="//";
+        if(str.contains(cur)){//如果包含“//”字符串的话
+            QString str_2=str.trimmed();//去掉字符串首尾空格
+            if(str_2.startsWith(cur)){//整行都是注释,直接隐藏掉这一行
+                continue;
+            }
+            else {//把注释删掉并存起来
+                int j=str.indexOf(cur);//返回‘//’在str中的索引下标
+                QString ss=str.mid(0,j);//取代码部分
+                daima.append(ss);
+                QString s=str.mid(j);//取注释
+                zhushi.append(s);
+                zhushi_hang[size]=i;
+                size++;
+                //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
+
+                //将光标跳到指定行
+                QTextCursor tc = ui->textEdit->textCursor();
+                int toPost =document->findBlockByNumber(i).position();
+                tc.setPosition(toPost,QTextCursor::MoveAnchor);
+                ui->textEdit->setTextCursor(tc);
+                //删除光标所在行
+                tc.select(QTextCursor::BlockUnderCursor);
+                tc.removeSelectedText();
+                ui->textEdit->insertPlainText("\n"+ss);
+            }
+        }
+    }
+    for(int i=0;i<row_num;i++){
+        QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
+        if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
+            int j=i;
+            for(;j<row_num;j++){
+                QString str_j = document->findBlockByLineNumber(j).text(); //获取第i行的内容
+                if(str_j.contains("*/")){
+                    break;
+                }
+            }
+            for(int m=i;m<=j;m++){//隐掉段落注释
+                QTextBlock oTextBlock = document->findBlockByNumber(m);
+                oTextBlock.setVisible(false);
+            }
+            i=j;
+            continue;
+        }
+        if(str.contains("//")){//如果包含“//”字符串的话
+            QString str_2=str.trimmed();//去掉字符串首尾空格
+            if(str_2.startsWith("//")){//整行都是注释,直接隐藏掉这一行
+                QTextBlock oTextBlock = document->findBlockByNumber(i);
+                oTextBlock.setVisible(false);
+            }
+        }
+    }
+    /*调整与更新！！！！超重要！！！*/
+    document->adjustSize();
+    ui->textEdit->update();
+}
+
+
 /*
 void MainWindow::splitter(){
     QSplitter * mainSplitter = new QSplitter(Qt::Horizontal,ui->centralWidget);
@@ -351,6 +585,3 @@ void MainWindow::splitter(){
     mainSplitter->show();
 }
 */
-
-
-
