@@ -68,17 +68,9 @@
         </property>
        </column>
       </widget>
-      <widget class="CodeEditor" name="textEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>15</pointsize>
-        </font>
+      <widget class="CodeTab" name="codeTab">
+       <property name="currentIndex">
+        <number>-1</number>
        </property>
       </widget>
      </widget>
@@ -91,22 +83,16 @@
      <x>0</x>
      <y>0</y>
      <width>445</width>
-     <height>26</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_F">
     <property name="title">
      <string>文件(&amp;F)</string>
     </property>
-    <widget class="QMenu" name="menu_O">
-     <property name="title">
-      <string>打开(&amp;O)</string>
-     </property>
-     <addaction name="action_open_files"/>
-     <addaction name="action_open_file"/>
-    </widget>
     <addaction name="action_New"/>
-    <addaction name="menu_O"/>
+    <addaction name="action_open_file"/>
+    <addaction name="action_open_files"/>
     <addaction name="action_Close"/>
     <addaction name="separator"/>
     <addaction name="action_Save"/>
@@ -280,7 +266,10 @@
   </action>
   <action name="action_open_file">
    <property name="text">
-    <string>打开单个文件</string>
+    <string>打开文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="action_visible">
@@ -297,9 +286,10 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>CodeEditor</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">codeeditor.h</header>
+   <class>CodeTab</class>
+   <extends>QTabWidget</extends>
+   <header>codetab.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

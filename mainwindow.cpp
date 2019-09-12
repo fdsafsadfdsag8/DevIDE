@@ -21,8 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    isUntitled=true;
-    curFile=tr("未命名.txt");
+    QString curFile=ui->codeTab->currentFile();
     setWindowTitle(curFile);
 
     this->resize(QSize(800,500));//修改初始化窗口大小
@@ -61,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(btn, SIGNAL(clicked()), this, SLOT(showFindText()));//将按钮的单击信号关联到自定义的显示查找到的文本槽上
 
-    document=ui->textEdit->document();//将文本编辑区转为QTextDocument对象
+    document=ui->codeTab->currentEditor()->document();//将文本编辑区转为QTextDocument对象
     row_num=document->lineCount();//获取行数
     row=0;
 }
@@ -71,157 +70,53 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::newFile(){
-    if(maybeSave()){
-        isUntitled=true;
-        curFile=tr("未命名.txt");
-        setWindowTitle(curFile);
-        ui->textEdit->clear();
-        ui->treeWidget->clear();//清空
-        ui->textEdit->setVisible(true);
-    }
-}
-
-bool MainWindow::maybeSave(){
-    //如果文件被修改过
-    if(ui->textEdit->document()->isModified()){
-       //警告框
-       QMessageBox box;
-       box.setWindowTitle(tr("警告"));
-       box.setIcon(QMessageBox::Warning);
-       box.setText(curFile+tr("尚未保存，是否保存？"));
-
-       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
-       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
-       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
-
-       box.exec();
-       if(box.clickedButton()==yesbtn){
-           return save();
-       }else if (box.clickedButton()==cancelbtn) {
-           return false;
-       }
-    }
-    return true;
-}
-
-
-bool MainWindow::save(){
-
-    if(isUntitled){
-        return saveAs();
-    }else{
-        return saveFile(curFile);
-    }
-}
-
-
-bool MainWindow::saveAs(){
-    QString filename=QFileDialog::getSaveFileName(this,tr("另存为"),curFile);
-    if(filename.isEmpty()) return false;
-    return saveFile(filename);
-}
-
-bool MainWindow::saveFile(const QString &fileName){
-    QFile file(fileName);
-
-    if(!file.open(QFile::WriteOnly|QFile::Text)){
-        QMessageBox::warning(this,tr("多文档编辑器"),tr("无法写入文件 %1: /n %2").arg(fileName).arg(file.errorString()));
-        return false;
-    }
-    QTextStream out(&file);
-
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    out<<ui->textEdit->toPlainText();
-
-    QApplication::restoreOverrideCursor();
-    isUntitled=false;
-
-    curFile=QFileInfo(fileName).canonicalFilePath();
-    setWindowTitle(curFile);
-
-    loadtree(fileName);//保存之后加载目录树
-
-    return true;
-}
-
 void MainWindow::on_action_New_triggered()
 {
-    newFile();
+    ui->codeTab->newFile();
 }
 
 
 void MainWindow::on_action_Save_triggered()
 {
-    save();
+    ui->codeTab->save();
 }
 
 void MainWindow::on_action_SaveAs_triggered()
 {
-    saveAs();
-}
-
-bool MainWindow::loadFile(const QString &fileName)
-{
-   ui->textEdit->clear();//清空上一次打开的东西
-   QFile file(fileName); // 新建QFile对象
-   if (!file.open(QFile::ReadOnly | QFile::Text)) {
-       QMessageBox::warning(this, tr("多文档编辑器"),
-                             tr("无法读取文件 %1:\n%2.")
-                             .arg(fileName).arg(file.errorString()));
-       return false; // 只读方式打开文件，出错则提示，并返回false
-   }
-   QTextStream in(&file); // 新建文本流对象
-   QApplication::setOverrideCursor(Qt::WaitCursor);
-   // 读取文件的全部文本内容，并添加到编辑器中
-   ui->textEdit->setPlainText(in.readAll());
-   QApplication::restoreOverrideCursor();
-
-   // 设置当前文件
-   curFile = QFileInfo(fileName).canonicalFilePath();
-   setWindowTitle(curFile);
-   return true;
+    ui->codeTab->saveAs();
 }
 
 void MainWindow::on_action_open_file_triggered()
 {
-    if (maybeSave()) {
+    QString fileName = QFileDialog::getOpenFileName(this);
 
-        QString fileName = QFileDialog::getOpenFileName(this);
-
-        // 如果文件名不为空，则加载文件
-        if (!fileName.isEmpty()) {
-             loadFile(fileName);
-             ui->textEdit->setVisible(true);
-             loadtree(fileName);
-        }
+    // 如果文件名不为空，则加载文件
+    if (!fileName.isEmpty()) {
+        ui->codeTab->openFile(fileName);
+        loadtree(fileName);
     }
 }
 
 void MainWindow::on_action_open_files_triggered()
 {
-    if (maybeSave()) {
+    QString directoryName = QFileDialog::getExistingDirectory(this,tr("选择文件夹"),".");
 
-        QString directoryName = QFileDialog::getExistingDirectory(this,tr("选择文件夹"),".");
-
-        if (!directoryName.isEmpty()){
-            ui->textEdit->clear();
-            ui->textEdit->setVisible(false);
-            loadtree(directoryName);
-            qDebug() << directoryName;//输出
-        }
+    if (!directoryName.isEmpty()){
+        loadtree(directoryName);
     }
 }
 
 void MainWindow::on_action_Close_triggered()
 {
-    if (maybeSave()) {
-        ui->textEdit->setVisible(false);
+    if (ui->codeTab->maybeSave()) {
+        ui->codeTab->removeTab(ui->codeTab->currentIndex());
     }
 }
 
 void MainWindow::on_action_Run_triggered()
 {
+    QString curFile=ui->codeTab->currentFile();
+
     QString dirName=QFileInfo(curFile).path();
     QString baseName=QFileInfo(curFile).baseName();
     QString suffix=QFileInfo(curFile).completeSuffix();
@@ -246,6 +141,8 @@ void MainWindow::on_action_Run_triggered()
 
 void MainWindow::on_action_Compile_triggered()
 {
+    QString curFile=ui->codeTab->currentFile();
+
     QString dirName=QFileInfo(curFile).path();
     QString baseName=QFileInfo(curFile).baseName();
     QString suffix=QFileInfo(curFile).completeSuffix();
@@ -262,7 +159,7 @@ void MainWindow::on_action_Compile_triggered()
     QString enterCmd="cd /d "+dirName;
     QString compileCmd=prefix+" -g "+fullName+" -o "+baseName+".exe";
     QString cmd=enterCmd+" && "+compileCmd;
-    save();
+//    save();
     system(cmd.toStdString().c_str());
 }
 
@@ -357,17 +254,13 @@ void MainWindow::showSelectedDocument(QTreeWidgetItem * item,int column){
         }
         //int col = parent->indexOfChild(item); //item在父项中的节点行号(从0开始)
 
-        if (maybeSave()) {
+        if (ui->codeTab->maybeSave()) {
 
             QString fileurl = current_url;
-            //qDebug()<< fileName;
-            //qDebug()<< col;
-            //qDebug()<< (item->text(0));//只有item->text(0)才能获取当前item的文件名
 
             // 如果文件名不为空，则加载文件
             if (!fileurl.isEmpty()) {
-                 loadFile(fileurl);
-                 ui->textEdit->setVisible(true);
+                 ui->codeTab->openFile(fileurl);
             }
         }
         current_url=url;
@@ -380,14 +273,14 @@ void MainWindow::showFindText()//在当前打开文本中查找
     if(FindBack_CheckBox->isChecked()){
         if(FindWhole_CheckBox->isChecked()){
             if(FindCase_CheckBox->isChecked()){
-                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
@@ -395,14 +288,14 @@ void MainWindow::showFindText()//在当前打开文本中查找
             }
         }
         else if(FindCase_CheckBox->isChecked()){
-                if (!ui->textEdit->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->textEdit->find(str,QTextDocument::FindBackward))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
@@ -412,14 +305,14 @@ void MainWindow::showFindText()//在当前打开文本中查找
     }
     else if(FindWhole_CheckBox->isChecked()){
             if(FindCase_CheckBox->isChecked()){
-                if (!ui->textEdit->find(str,QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->textEdit->find(str,QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
@@ -427,14 +320,14 @@ void MainWindow::showFindText()//在当前打开文本中查找
             }
         }
         else if(FindCase_CheckBox->isChecked()){
-                if (!ui->textEdit->find(str,QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->textEdit->find(str))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str))//用来指定查找的方式。可以使用“|”符号来一起使用
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
@@ -461,14 +354,14 @@ void MainWindow::on_action_visible_triggered()
                 QString str="";
                 str=daima[j]+zhushi[j];
                 //将光标跳到指定行
-                QTextCursor tc = ui->textEdit->textCursor();
+                QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
                 int toPost =document->findBlockByNumber(i).position();
                 tc.setPosition(toPost,QTextCursor::MoveAnchor);
-                ui->textEdit->setTextCursor(tc);
+                ui->codeTab->currentEditor()->setTextCursor(tc);
                 //删除光标所在行
                 tc.select(QTextCursor::BlockUnderCursor);
                 tc.removeSelectedText();
-                ui->textEdit->insertPlainText("\n"+str);
+                ui->codeTab->currentEditor()->insertPlainText("\n"+str);
 
                 text.append(str);
                 j++;
@@ -490,12 +383,12 @@ void MainWindow::on_action_visible_triggered()
 
     /*调整与更新！！！！超重要！！！*/
     document->adjustSize();
-    ui->textEdit->update();
+    ui->codeTab->currentEditor()->update();
 }
 
 void MainWindow::on_action_unvisible_triggered()
 {
-    document = ui->textEdit->document();//将文本编辑区转为QTextDocument对象
+    document = ui->codeTab->currentEditor()->document();//将文本编辑区转为QTextDocument对象
     row_num=document->lineCount();//获取行数
     qDebug()<<row_num;
 
@@ -530,14 +423,14 @@ void MainWindow::on_action_unvisible_triggered()
                 //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
 
                 //将光标跳到指定行
-                QTextCursor tc = ui->textEdit->textCursor();
+                QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
                 int toPost =document->findBlockByNumber(i).position();
                 tc.setPosition(toPost,QTextCursor::MoveAnchor);
-                ui->textEdit->setTextCursor(tc);
+                ui->codeTab->currentEditor()->setTextCursor(tc);
                 //删除光标所在行
                 tc.select(QTextCursor::BlockUnderCursor);
                 tc.removeSelectedText();
-                ui->textEdit->insertPlainText("\n"+ss);
+                ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
             }
         }
     }
@@ -568,7 +461,7 @@ void MainWindow::on_action_unvisible_triggered()
     }
     /*调整与更新！！！！超重要！！！*/
     document->adjustSize();
-    ui->textEdit->update();
+    ui->codeTab->currentEditor()->update();
 }
 
 
@@ -579,7 +472,7 @@ void MainWindow::splitter(){
     mainSplitter->setStyleSheet("QSplitter::handle { background-color: black }"); //设置分界线的样式
 
     mainSplitter->addWidget(ui->treeWidget);
-    mainSplitter->addWidget(ui->textEdit);
+    mainSplitter->addWidget(ui->codeTab->currentEditor());
     mainSplitter->setOrientation(Qt::Vertical);//指定子窗件按加载顺序进行指定方向排列
     mainSplitter->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     mainSplitter->show();
