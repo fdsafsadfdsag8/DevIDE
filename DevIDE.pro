@@ -26,12 +26,16 @@ CONFIG += c++11
 
 SOURCES += \
         codeeditor.cpp \
+        codetab.cpp \
+        codewidget.cpp \
         highlighter.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
         codeeditor.h \
+        codetab.h \
+        codewidget.h \
         highlighter.h \
         mainwindow.h
 
