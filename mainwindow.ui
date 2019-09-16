@@ -76,6 +76,7 @@
      </widget>
     </item>
    </layout>
+
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

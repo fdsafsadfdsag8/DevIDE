@@ -50,6 +50,7 @@ private slots:
 
     void on_action_Compile_triggered();
 
+
     void on_action_open_file_triggered();//打开单个文件
 
     void on_action_open_files_triggered();//打开文件夹
