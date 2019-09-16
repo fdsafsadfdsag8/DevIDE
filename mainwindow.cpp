@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "codetab.h"
+#include "codewidget.h"
 #include<QMessageBox>
 #include<QPushButton>
 #include<QFileDialog>
