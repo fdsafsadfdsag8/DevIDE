@@ -67,17 +67,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     //为真：未保存过；为假：保存过
-<<<<<<< HEAD
     bool isUntitled;
     //保存当前文件的路径
     QString curFile;
-||||||| merged common ancestors
-<<<<<<<<< Temporary merge branch 1
-    bool isUntitled;
-    //保存当前文件的路径
-    QString curFile;
-=======
->>>>>>> upstream/master
 
     QLineEdit *findLineEdit;
     QDialog *findDlg;

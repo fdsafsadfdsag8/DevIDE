@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "codetab.h"
-#include "codewidget.h"
 #include<QMessageBox>
 #include<QPushButton>
 #include<QFileDialog>
@@ -28,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->resize(QSize(800,500));//修改初始化窗口大小
 
+    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
 
     //my_tab->setShape(QTabBar::TriangularNorth);//设置显示样式
     //splitter();
@@ -84,82 +83,6 @@ void MainWindow::on_action_Save_triggered()
 
 void MainWindow::on_action_SaveAs_triggered()
 {
-<<<<<<< HEAD
-    saveAs();
-}
-
-bool MainWindow::loadFile(const QString &fileName)
-{
-   ui->textEdit->clear();//清空上一次打开的东西
-   QFile file(fileName); // 新建QFile对象
-   if (!file.open(QFile::ReadOnly | QFile::Text)) {
-       QMessageBox::warning(this, tr("多文档编辑器"),
-                             tr("无法读取文件 %1:\n%2.")
-                             .arg(fileName).arg(file.errorString()));
-       return false; // 只读方式打开文件，出错则提示，并返回false
-   }
-   QTextStream in(&file); // 新建文本流对象
-   QApplication::setOverrideCursor(Qt::WaitCursor);
-   // 读取文件的全部文本内容，并添加到编辑器中
-   ui->textEdit->setPlainText(in.readAll());
-   QApplication::restoreOverrideCursor();
-
-   // 设置当前文件
-   curFile = QFileInfo(fileName).canonicalFilePath();
-   setWindowTitle(curFile);
-   return true;
-||||||| merged common ancestors
-<<<<<<<<< Temporary merge branch 1
-    saveAs();
-}
-
-bool MainWindow::loadFile(const QString &fileName)
-{
-   ui->textEdit->clear();//清空上一次打开的东西
-   QFile file(fileName); // 新建QFile对象
-   if (!file.open(QFile::ReadOnly | QFile::Text)) {
-       QMessageBox::warning(this, tr("多文档编辑器"),
-                             tr("无法读取文件 %1:\n%2.")
-                             .arg(fileName).arg(file.errorString()));
-       return false; // 只读方式打开文件，出错则提示，并返回false
-   }
-   QTextStream in(&file); // 新建文本流对象
-   QApplication::setOverrideCursor(Qt::WaitCursor);
-   // 读取文件的全部文本内容，并添加到编辑器中
-   ui->textEdit->setPlainText(in.readAll());
-   QApplication::restoreOverrideCursor();
-
-   // 设置当前文件
-   curFile = QFileInfo(fileName).canonicalFilePath();
-   setWindowTitle(curFile);
-   return true;
-||||||||| merged common ancestors
-    saveAs();
-}
-
-bool MainWindow::loadFile(const QString &fileName)
-{
-    ui->textEdit->clear();//清空上一次打开的东西
-   QFile file(fileName); // 新建QFile对象
-   if (!file.open(QFile::ReadOnly | QFile::Text)) {
-       QMessageBox::warning(this, tr("多文档编辑器"),
-                             tr("无法读取文件 %1:\n%2.")
-                             .arg(fileName).arg(file.errorString()));
-       return false; // 只读方式打开文件，出错则提示，并返回false
-   }
-   QTextStream in(&file); // 新建文本流对象
-   QApplication::setOverrideCursor(Qt::WaitCursor);
-   // 读取文件的全部文本内容，并添加到编辑器中
-   ui->textEdit->setPlainText(in.readAll());
-   QApplication::restoreOverrideCursor();
-
-   // 设置当前文件
-   curFile = QFileInfo(fileName).canonicalFilePath();
-   setWindowTitle(curFile);
-   return true;
-=========
-=======
->>>>>>> upstream/master
     ui->codeTab->saveAs();
 }
 
@@ -555,59 +478,3 @@ void MainWindow::splitter(){
     mainSplitter->show();
 }
 */
-
-//创建新的Tab（用于打开文件）
-void MainWindow::newTab(const QString& fileName, QFile& file)
-{
-    int index = 0;
-    NotePad *notePad = findNewFile(index);
-    if(notePad == NULL)
-    {
-        notePad = new NotePad(config);
-        index = tabWidget->addTab(notePad, QFileInfo(fileName).fileName());
-        addToNotePadMap(index, notePad);
-    }
-    else
-    {
-        notePad->SetNewFile(false);
-        tabWidget->setTabText(index, QFileInfo(fileName).fileName());
-        openedFiles.removeAt(index);
-        newNumber--;
-    }
-    openedFiles << fileName;
-    QByteArray data = file.readAll();
-    notePad->setPlainText(QString::fromLocal8Bit(data));
-    tabWidget->setCurrentIndex(index);
-    setWindowTitle(QFileInfo(fileName).fileName());
-}
-
-//关闭文件（指定文件）
-void MainWindow::fileClose(int index)
-{
-    if(!shouldCloseFile())
-    {
-        return;
-    }
-
-    if (maybeSave(index))
-    {
-        if (openedFiles.count() == 1)
-        {
-            openedFiles.clear();
-            QString fileName = "New 1";
-            openedFiles << fileName;
-            mapNotePads[0]->setPlainText("");
-            mapNotePads[0]->SetNewFile(true);
-            tabWidget->setTabText(0, fileName);
-            setWindowTitle(fileName);
-            newNumber = 1;
-        }
-        else
-        {
-            openedFiles.removeAt(index);
-            tabWidget->removeTab(index);
-            removeFromNotePadMap(index);
-            newNumber--;
-        }
-    }
-}
