@@ -2,6 +2,12 @@
 #include "codeeditor.h"
 #include <QtWidgets>
 #include "codeeditor.h"
+#include <QAbstractItemView>
+#include <QCompleter>
+#include <QKeyEvent>
+#include <QString>
+#include <QTextCursor>
+#include <QTextEdit>
 
 
 

@@ -6,48 +6,74 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>445</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-
-   <layout class="QGridLayout" name="gridLayout" rowstretch="1" columnstretch="1,5">
-    <item row="0" column="1">
-     <widget class="CodeEditor" name="textEdit">
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QTreeWidget" name="treeWidget">
-      <property name="maximumSize">
+      <property name="minimumSize">
        <size>
-        <width>16777215</width>
-        <height>16777215</height>
+        <width>5</width>
+        <height>5</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-       </font>
+      <property name="autoFillBackground">
+       <bool>false</bool>
       </property>
-      <property name="columnCount">
-       <number>1</number>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <column>
-       <property name="text">
-        <string>项目</string>
+      <property name="handleWidth">
+       <number>4</number>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QTreeWidget" name="treeWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>6</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-      </column>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+        </font>
+       </property>
+       <property name="columnCount">
+        <number>1</number>
+       </property>
+       <column>
+        <property name="text">
+         <string>项目</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="CodeTab" name="codeTab">
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+      </widget>
      </widget>
-
     </item>
    </layout>
 
@@ -57,23 +83,17 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>26</height>
+     <width>445</width>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_F">
     <property name="title">
      <string>文件(&amp;F)</string>
     </property>
-    <widget class="QMenu" name="menu_O">
-     <property name="title">
-      <string>打开(&amp;O)</string>
-     </property>
-     <addaction name="action_open_files"/>
-     <addaction name="action_open_file"/>
-    </widget>
     <addaction name="action_New"/>
-    <addaction name="menu_O"/>
+    <addaction name="action_open_file"/>
+    <addaction name="action_open_files"/>
     <addaction name="action_Close"/>
     <addaction name="separator"/>
     <addaction name="action_Save"/>
@@ -106,10 +126,18 @@
     <addaction name="action_Run"/>
     <addaction name="action_Compile"/>
    </widget>
+   <widget class="QMenu" name="menu_P">
+    <property name="title">
+     <string>显示/隐藏(P)</string>
+    </property>
+    <addaction name="action_visible"/>
+    <addaction name="action_unvisible"/>
+   </widget>
    <addaction name="menu_F"/>
    <addaction name="menu_E"/>
    <addaction name="menu_D"/>
    <addaction name="menu_H"/>
+   <addaction name="menu_P"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -120,6 +148,17 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
   <action name="action_New">
    <property name="text">
     <string>新建(&amp;N)</string>
@@ -228,16 +267,30 @@
   </action>
   <action name="action_open_file">
    <property name="text">
-    <string>打开单个文件</string>
+    <string>打开文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_visible">
+   <property name="text">
+    <string>显示</string>
+   </property>
+  </action>
+  <action name="action_unvisible">
+   <property name="text">
+    <string>隐藏</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>CodeEditor</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">codeeditor.h</header>
+   <class>CodeTab</class>
+   <extends>QTabWidget</extends>
+   <header>codetab.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

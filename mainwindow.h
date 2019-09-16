@@ -1,15 +1,21 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QTreeWidget>
 #include <QFileInfoList>
+#include <QTabBar>
+#include <QSplitter>
+#include <QDialog>
+#include <QTextDocument>
 
 namespace Ui {
 class MainWindow;
 }
 
-
+class QLineEdit;
+class QDialog;
+class QCheckBox;
 
 class MainWindow : public QMainWindow
 {
@@ -18,18 +24,15 @@ class MainWindow : public QMainWindow
 public:
 
     QString current_url;//当前打开文件夹路径
+    QTabBar *my_tab=new QTabBar(this);//创建tabbar
 
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void newFile();				//新建
-    bool maybeSave();			//判断是否需要保存
-    bool save();				//保存操作
-    bool saveAs();				//另存为操作
-    bool saveFile(const QString& fileName);//保存文件
-    bool loadFile(const QString &fileName); // 加载文件
 
     QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
     void loadtree(const QString &fileName);//显示目录树
+
+    void splitter();//分割窗体
 
 signals:
     void itemClicked ( QTreeWidgetItem * item, int column );//发射鼠标点击信号
@@ -54,13 +57,46 @@ private slots:
 
     void showSelectedDocument(QTreeWidgetItem * item, int column); //双击目录树中的文件显示文件内容事件
 
+    void showFindText();//与查找信号连接的槽
+    void on_action_Find_triggered();//与点击查找按钮或快捷键信号连接的槽
+
+    void on_action_visible_triggered();//注释的显示
+    void on_action_unvisible_triggered();//注释的隐藏
+
 
 private:
     Ui::MainWindow *ui;
     //为真：未保存过；为假：保存过
+<<<<<<< HEAD
     bool isUntitled;
     //保存当前文件的路径
     QString curFile;
+
+    QLineEdit *findLineEdit;
+    QDialog *findDlg;
+
+    QCheckBox *FindBack_CheckBox;//从后往前查找
+    QCheckBox *FindWhole_CheckBox;//全词匹配
+    QCheckBox *FindCase_CheckBox;//区分大小写
+
+    QStringList zhushi;//存删掉的行注释(这一行还有代码)
+    QStringList daima;//存删掉的行注释这一行的代码
+    int zhushi_hang[2000];//存对应行注释的行数(限定2000行)
+    int size=0;//数组大小
+
+    QStringList text;//用于重写文件
+    int row_num;//行数
+
+    QTextDocument *document;
+
+    int row;//记录隐藏掉的行数
+
+||||||| merged common ancestors
+    bool isUntitled;
+    //保存当前文件的路径
+    QString curFile;
+=======
+>>>>>>> upstream/dev
 };
 
 #endif // MAINWINDOW_H

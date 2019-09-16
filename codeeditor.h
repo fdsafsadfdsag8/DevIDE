@@ -3,6 +3,9 @@
 #define CODEEDITOR_H
 
 #include <QPlainTextEdit>
+#include <QTextEdit>
+#include <QString>
+#include <QCompleter>
 #include"highlighter.h"
 
 QT_BEGIN_NAMESPACE
@@ -24,6 +27,8 @@ public:
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+    void setCompleter(QCompleter *completer);
+
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -38,6 +43,7 @@ private:
     const int tabStop=6;
     Highlighter * highlighter;
     void setHighlight();
+
 };
 
 
