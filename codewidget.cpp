@@ -15,6 +15,14 @@ CodeWidget::CodeWidget(QWidget* parent)
     vLayout->addWidget(codeEditor);
     //初始未命名
     titled=false;
+
+    //设置自动补全模板
+    // 初始化智能提示
+    completer = new QCompleter(this);
+    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setWrapAround(false);
+    codeEditor->setCompleter(completer);
 }
 
 bool CodeWidget::isUntitled(){
