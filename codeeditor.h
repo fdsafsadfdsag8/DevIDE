@@ -1,4 +1,3 @@
-
 #ifndef CODEEDITOR_H
 #define CODEEDITOR_H
 
@@ -28,21 +27,28 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
     void setCompleter(QCompleter *completer);
-
+    QCompleter *completer() const;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *e) override;
+    void focusInEvent(QFocusEvent *e) override;
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
     void highlightCurrentLine();
     void updateLineNumberArea(const QRect &, int);
+    void insertCompletion(const QString &completion);
 
 private:
     QWidget *lineNumberArea;
     const int tabStop=6;
     Highlighter * highlighter;
     void setHighlight();
+
+    QString textUnderCursor() const;
+    QCompleter *c;
+    void updateCompleteList();
 
 };
 

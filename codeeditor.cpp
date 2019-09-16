@@ -1,4 +1,3 @@
-
 #include "codeeditor.h"
 #include <QtWidgets>
 #include "codeeditor.h"
@@ -13,6 +12,7 @@
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
+    c=NULL;
     lineNumberArea = new LineNumberArea(this);
 
     connect(this, &CodeEditor::blockCountChanged, this, &CodeEditor::updateLineNumberAreaWidth);
@@ -127,4 +127,187 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         bottom = top + (int) blockBoundingRect(block).height();
         ++blockNumber;
     }
+}
+
+
+//自动补全：
+QStringList getCompleteList(const QString &code, const int line, const int column)
+{
+    static QRegularExpression re("(<#.*#>)|\\[.*\\]");
+
+    qInfo() << "getCompleteList:" << line << column;
+    QProcess clang;
+    QString tmp;
+    tmp.sprintf("-code-completion-at=-:%d:%d", line, column);
+    clang.start("clang", QStringList() << "-xc" << "-" <<
+                "-fcolor-diagnostics" << "-fsyntax-only" << "-Xclang" << "-code-completion-macros" <<
+                "-Xclang" << "-code-completion-patterns" << "-Xclang" << "-code-completion-brief-comments" <<
+                "-Xclang" << tmp);
+    clang.write(code.toUtf8());
+    clang.closeWriteChannel();
+    clang.waitForFinished();
+
+
+    QStringList tip_list;
+
+    while (!clang.atEnd()) {
+        QString buf = QTextCodec::codecForLocale()->toUnicode(clang.readLine());
+        QList<QString> tips = buf.split(':');
+        if (tips.size() == 3) {
+            //qDebug("%s", tips[2].trimmed().data());
+            QString tip = tips[2].trimmed().replace(re, "");
+            tip_list.append(tip);
+        }
+    }
+
+    return tip_list;
+}
+
+
+void CodeEditor::setCompleter(QCompleter *completer)
+{
+    if (c) {
+        QObject::disconnect(c, nullptr, this, nullptr);
+    }
+
+    c = completer;
+
+    if (!c) {
+        return;
+    }
+
+    QFont font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    font.setPointSize(10);
+
+    c->setWidget(this);
+    c->setCompletionMode(QCompleter::PopupCompletion);
+    c->setCaseSensitivity(Qt::CaseInsensitive);
+    c->popup()->setFont(font);
+    QObject::connect(c, QOverload<const QString&>::of(&QCompleter::activated),
+                     this, &CodeEditor::insertCompletion);
+
+}
+
+QCompleter *CodeEditor::completer() const
+{
+    return c;
+}
+
+void CodeEditor::insertCompletion(const QString& completion)
+{
+    if (c->widget() != this) {
+        return;
+    }
+
+    QTextCursor tc = textCursor();
+    // 判断需要额外插入的长度
+    int extra = completion.length() - c->completionPrefix().length();
+    tc.movePosition(QTextCursor::Left);
+    tc.movePosition(QTextCursor::EndOfWord);
+    tc.insertText(completion.right(extra));
+
+    // 如果以 () <> "" 结尾的话, 将光标向左移动一位
+    if (completion.endsWith("()") || completion.endsWith("<>") || completion.endsWith("\"\"")) {
+        tc.movePosition(QTextCursor::Left);
+        setTextCursor(tc);
+    }
+}
+
+void CodeEditor::keyPressEvent(QKeyEvent *e)
+{
+    // 括号, 双引号自动完成
+    do {
+        if (e->key() == Qt::Key_QuoteDbl) {
+            this->insertPlainText("\"");
+        } else if (e->key() == Qt::Key_Apostrophe) {
+            this->insertPlainText("'");
+        } else if (e->key() == Qt::Key_BraceLeft) {
+            this->insertPlainText("}");
+        } else if (e->key() == Qt::Key_BracketLeft) {
+            this->insertPlainText("]");
+        } else if (e->key() == Qt::Key_ParenLeft) {
+            this->insertPlainText(")");
+        } else {
+            break;
+        }
+        this->moveCursor(QTextCursor::Left);
+    } while (0);
+
+
+    if (c && c->popup()->isVisible()) {
+        // 以下按键统统忽略, 注意 Backspace 并没有被忽略
+        switch (e->key()) {
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+        case Qt::Key_Escape:
+        case Qt::Key_Tab:
+        case Qt::Key_Backtab:
+            e->ignore();
+            return;
+        default:
+           break;
+        }
+    }
+
+    bool isShortcut = ((e->modifiers() & Qt::ControlModifier) && e->key() == Qt::Key_E); // CTRL+E
+    if (!c || !isShortcut) // do not process the shortcut when we have a completer
+        QPlainTextEdit::keyPressEvent(e);
+
+    const bool ctrlOrShift = e->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier);
+    if (!c || (ctrlOrShift && e->text().isEmpty()))
+        return;
+
+    static QString eow("~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+    bool hasModifier = (e->modifiers() != Qt::NoModifier) && !ctrlOrShift;
+    QString completionPrefix = textUnderCursor();
+
+    // 如果按键内容为空 || 补全前缀长度小于 3 并且不是 '.', 则不补全
+    const bool isBadText = e->text().isEmpty() || (completionPrefix.length() < 3 && e->text() != "."); // || eow.contains(e->text().right(1));
+    if (!isShortcut && (hasModifier || isBadText)) {
+        c->popup()->hide();
+        return;
+    }
+
+    // 只触发一次更新补全列表, 提高响应速度
+    if (completionPrefix.length() == 3 || e->text() == ".") {
+        updateCompleteList();
+    }
+
+    if (completionPrefix != c->completionPrefix()) {
+        c->setCompletionPrefix(completionPrefix);
+        c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
+    }
+    QRect cr = cursorRect();
+    cr.setWidth(c->popup()->sizeHintForColumn(0)
+                + c->popup()->verticalScrollBar()->sizeHint().width());
+
+    c->complete(cr); // popup it up!
+}
+
+QString CodeEditor::textUnderCursor() const
+{
+    QTextCursor tc = textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+    return tc.selectedText();
+}
+
+void CodeEditor::focusInEvent(QFocusEvent *e)
+{
+    if (c) {
+        c->setWidget(this);
+    }
+    QPlainTextEdit::focusInEvent(e);
+}
+
+
+
+void CodeEditor::updateCompleteList()
+{
+    // 获取光标当前位置(从 0 开始)
+    const int x = textCursor().positionInBlock();
+    const int y = textCursor().blockNumber();
+
+    QStringList complete_list = getCompleteList(this->toPlainText(), y + 1, x + 1);
+
+    c->setModel(new QStringListModel(complete_list, c));
 }

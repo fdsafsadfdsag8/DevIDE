@@ -67,7 +67,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     //为真：未保存过；为假：保存过
-<<<<<<< HEAD
     bool isUntitled;
     //保存当前文件的路径
     QString curFile;
@@ -91,12 +90,6 @@ private:
 
     int row;//记录隐藏掉的行数
 
-||||||| merged common ancestors
-    bool isUntitled;
-    //保存当前文件的路径
-    QString curFile;
-=======
->>>>>>> upstream/dev
 };
 
 #endif // MAINWINDOW_H
