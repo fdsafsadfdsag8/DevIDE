@@ -13,6 +13,14 @@ CodeTab::CodeTab(QWidget* parent)
     :QTabWidget(parent)
 {
     newFile();
+
+    this->setTabsClosable(true);
+    connect(this,&QTabWidget::tabCloseRequested,this,&CodeTab::close);
+}
+void CodeTab::close(int index){
+    if (this->maybeSave()) {
+        this->removeTab(index);
+    }
 }
 CodeEditor* CodeTab::currentEditor(){
     CodeWidget* tab=(CodeWidget*)this->currentWidget();

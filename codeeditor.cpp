@@ -130,7 +130,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 }
 
 
-//自动补全：
+//====================================================自动补全==================================================================
 QStringList getCompleteList(const QString &code, const int line, const int column)
 {
     static QRegularExpression re("(<#.*#>)|\\[.*\\]");
