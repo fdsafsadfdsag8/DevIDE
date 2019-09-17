@@ -26,7 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->resize(QSize(800,500));//修改初始化窗口大小
 
+    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
 
@@ -119,6 +121,101 @@ bool MainWindow::maybeSave(){
 
 bool MainWindow::save(){
 =======
+||||||| merged common ancestors
+<<<<<<<<< Temporary merge branch 1
+    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
+
+    QT
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::newFile(){
+    if(maybeSave()){
+        isUntitled=true;
+        curFile=tr("未命名.txt");
+        setWindowTitle(curFile);
+        ui->textEdit->clear();
+        ui->treeWidget->clear();//清空
+        ui->textEdit->setVisible(true);
+    }
+}
+
+bool MainWindow::maybeSave(){
+    //如果文件被修改过
+    if(ui->textEdit->document()->isModified()){
+       //警告框
+       QMessageBox box;
+       box.setWindowTitle(tr("警告"));
+       box.setIcon(QMessageBox::Warning);
+       box.setText(curFile+tr("尚未保存，是否保存？"));
+
+       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
+       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
+       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
+
+       box.exec();
+       if(box.clickedButton()==yesbtn){
+           return save();
+       }else if (box.clickedButton()==cancelbtn) {
+           return false;
+       }
+    }
+    return true;
+}
+
+
+bool MainWindow::save(){
+||||||||| merged common ancestors
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::newFile(){
+    if(maybeSave()){
+        isUntitled=true;
+        curFile=tr("未命名.txt");
+        setWindowTitle(curFile);
+        ui->textEdit->clear();
+        ui->treeWidget->clear();//清空
+        ui->textEdit->setVisible(true);
+    }
+}
+
+bool MainWindow::maybeSave(){
+    //如果文件被修改过
+    if(ui->textEdit->document()->isModified()){
+       //警告框
+       QMessageBox box;
+       box.setWindowTitle(tr("警告"));
+       box.setIcon(QMessageBox::Warning);
+       box.setText(curFile+tr("尚未保存，是否保存？"));
+
+       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
+       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
+       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
+
+       box.exec();
+       if(box.clickedButton()==yesbtn){
+           return save();
+       }else if (box.clickedButton()==cancelbtn) {
+           return false;
+       }
+    }
+    return true;
+}
+
+
+bool MainWindow::save(){
+=========
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
     //my_tab->setShape(QTabBar::TriangularNorth);//设置显示样式
     //splitter();
     ui->splitter->setStretchFactor(0, 1);//初始左边占1/6
@@ -140,7 +237,12 @@ bool MainWindow::save(){
     layout_0->addWidget(FindWhole_CheckBox);
     layout_0->addWidget(FindCase_CheckBox);
     */
+<<<<<<< HEAD
 >>>>>>> upstream/master
+||||||| merged common ancestors
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
 
     QVBoxLayout *layout_2= new QVBoxLayout(findDlg);//将一个行编辑器和一个按钮放到上面，并使用布局管理器进行布局。
     layout_2->addWidget(findLineEdit);
@@ -470,6 +572,7 @@ void MainWindow::on_action_visible_triggered()
     QString file= text.join("\n");//将QStringlist转化为QString
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 //创建新的Tab（用于打开文件）
 void MainWindow::newTab(const QString& fileName, QFile& file)
 {
@@ -504,11 +607,55 @@ void MainWindow::fileClose(int index)
     }
 ||||||| merged common ancestors
 =======
+||||||| merged common ancestors
+<<<<<<<<< Temporary merge branch 1
+//创建新的Tab（用于打开文件）
+void MainWindow::newTab(const QString& fileName, QFile& file)
+{
+    int index = 0;
+    NotePad *notePad = findNewFile(index);
+    if(notePad == NULL)
+    {
+        notePad = new NotePad(config);
+        index = tabWidget->addTab(notePad, QFileInfo(fileName).fileName());
+        addToNotePadMap(index, notePad);
+    }
+    else
+    {
+        notePad->SetNewFile(false);
+        tabWidget->setTabText(index, QFileInfo(fileName).fileName());
+        openedFiles.removeAt(index);
+        newNumber--;
+    }
+    openedFiles << fileName;
+    QByteArray data = file.readAll();
+    notePad->setPlainText(QString::fromLocal8Bit(data));
+    tabWidget->setCurrentIndex(index);
+    setWindowTitle(QFileInfo(fileName).fileName());
+}
+
+//关闭文件（指定文件）
+void MainWindow::fileClose(int index)
+{
+    if(!shouldCloseFile())
+    {
+        return;
+    }
+||||||||| merged common ancestors
+=========
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
     //清空注释list和对应的int数组
     zhushi.clear();
     size=0;
+<<<<<<< HEAD
 >>>>>>> upstream/master
+||||||| merged common ancestors
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     if (maybeSave(index))
     {
@@ -534,6 +681,34 @@ void MainWindow::fileClose(int index)
 }
 ||||||| merged common ancestors
 =======
+||||||| merged common ancestors
+<<<<<<<<< Temporary merge branch 1
+    if (maybeSave(index))
+    {
+        if (openedFiles.count() == 1)
+        {
+            openedFiles.clear();
+            QString fileName = "New 1";
+            openedFiles << fileName;
+            mapNotePads[0]->setPlainText("");
+            mapNotePads[0]->SetNewFile(true);
+            tabWidget->setTabText(0, fileName);
+            setWindowTitle(fileName);
+            newNumber = 1;
+        }
+        else
+        {
+            openedFiles.removeAt(index);
+            tabWidget->removeTab(index);
+            removeFromNotePadMap(index);
+            newNumber--;
+        }
+    }
+}
+||||||||| merged common ancestors
+=========
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
     /*调整与更新！！！！超重要！！！*/
     document->adjustSize();
     ui->codeTab->currentEditor()->update();
@@ -631,4 +806,9 @@ void MainWindow::splitter(){
     mainSplitter->show();
 }
 */
+<<<<<<< HEAD
 >>>>>>> upstream/master
+||||||| merged common ancestors
+>>>>>>>>> Temporary merge branch 2
+=======
+>>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c

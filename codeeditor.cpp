@@ -1,4 +1,3 @@
-
 #include "codeeditor.h"
 #include <QtWidgets>
 #include "codeeditor.h"

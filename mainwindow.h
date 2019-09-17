@@ -67,6 +67,9 @@ private slots:
 private:
     Ui::MainWindow *ui;
     //为真：未保存过；为假：保存过
+    bool isUntitled;
+    //保存当前文件的路径
+    QString curFile;
 
     QLineEdit *findLineEdit;
     QDialog *findDlg;
