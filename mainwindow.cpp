@@ -28,198 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
-
-    QT
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::newFile(){
-    if(maybeSave()){
-        isUntitled=true;
-        curFile=tr("未命名.txt");
-        setWindowTitle(curFile);
-        ui->textEdit->clear();
-        ui->treeWidget->clear();//清空
-        ui->textEdit->setVisible(true);
-    }
-}
-
-bool MainWindow::maybeSave(){
-    //如果文件被修改过
-    if(ui->textEdit->document()->isModified()){
-       //警告框
-       QMessageBox box;
-       box.setWindowTitle(tr("警告"));
-       box.setIcon(QMessageBox::Warning);
-       box.setText(curFile+tr("尚未保存，是否保存？"));
-
-       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
-       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
-       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
-
-       box.exec();
-       if(box.clickedButton()==yesbtn){
-           return save();
-       }else if (box.clickedButton()==cancelbtn) {
-           return false;
-       }
-    }
-    return true;
-}
-
-
-bool MainWindow::save(){
-||||||| merged common ancestors
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::newFile(){
-    if(maybeSave()){
-        isUntitled=true;
-        curFile=tr("未命名.txt");
-        setWindowTitle(curFile);
-        ui->textEdit->clear();
-        ui->treeWidget->clear();//清空
-        ui->textEdit->setVisible(true);
-    }
-}
-
-bool MainWindow::maybeSave(){
-    //如果文件被修改过
-    if(ui->textEdit->document()->isModified()){
-       //警告框
-       QMessageBox box;
-       box.setWindowTitle(tr("警告"));
-       box.setIcon(QMessageBox::Warning);
-       box.setText(curFile+tr("尚未保存，是否保存？"));
-
-       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
-       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
-       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
-
-       box.exec();
-       if(box.clickedButton()==yesbtn){
-           return save();
-       }else if (box.clickedButton()==cancelbtn) {
-           return false;
-       }
-    }
-    return true;
-}
-
-
-bool MainWindow::save(){
-=======
-||||||| merged common ancestors
-<<<<<<<<< Temporary merge branch 1
-    connect(ui->treeWidget,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(showSelectedDocument(QTreeWidgetItem*,int)));//连接目录树的信号和槽
-
-    QT
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::newFile(){
-    if(maybeSave()){
-        isUntitled=true;
-        curFile=tr("未命名.txt");
-        setWindowTitle(curFile);
-        ui->textEdit->clear();
-        ui->treeWidget->clear();//清空
-        ui->textEdit->setVisible(true);
-    }
-}
-
-bool MainWindow::maybeSave(){
-    //如果文件被修改过
-    if(ui->textEdit->document()->isModified()){
-       //警告框
-       QMessageBox box;
-       box.setWindowTitle(tr("警告"));
-       box.setIcon(QMessageBox::Warning);
-       box.setText(curFile+tr("尚未保存，是否保存？"));
-
-       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
-       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
-       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
-
-       box.exec();
-       if(box.clickedButton()==yesbtn){
-           return save();
-       }else if (box.clickedButton()==cancelbtn) {
-           return false;
-       }
-    }
-    return true;
-}
-
-
-bool MainWindow::save(){
-||||||||| merged common ancestors
-}
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
-
-void MainWindow::newFile(){
-    if(maybeSave()){
-        isUntitled=true;
-        curFile=tr("未命名.txt");
-        setWindowTitle(curFile);
-        ui->textEdit->clear();
-        ui->treeWidget->clear();//清空
-        ui->textEdit->setVisible(true);
-    }
-}
-
-bool MainWindow::maybeSave(){
-    //如果文件被修改过
-    if(ui->textEdit->document()->isModified()){
-       //警告框
-       QMessageBox box;
-       box.setWindowTitle(tr("警告"));
-       box.setIcon(QMessageBox::Warning);
-       box.setText(curFile+tr("尚未保存，是否保存？"));
-
-       QPushButton* yesbtn=box.addButton(tr("是(&Y)"),QMessageBox::YesRole);
-       box.addButton(tr("否(&N)"),QMessageBox::NoRole);
-       QPushButton* cancelbtn=box.addButton(tr("取消(&C)"),QMessageBox::RejectRole);
-
-       box.exec();
-       if(box.clickedButton()==yesbtn){
-           return save();
-       }else if (box.clickedButton()==cancelbtn) {
-           return false;
-       }
-    }
-    return true;
-}
-
-
-bool MainWindow::save(){
-=========
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
     //my_tab->setShape(QTabBar::TriangularNorth);//设置显示样式
     //splitter();
-    ui->splitter->setStretchFactor(0, 1);//初始左边占1/6
-    ui->splitter->setStretchFactor(1, 5);//初始右边占5/6
+    ui->splitter->setStretchFactor(0, 1);//初始左边占1/9
+    ui->splitter->setStretchFactor(1, 8);//初始右边占8/9
 
 
     //查找功能
@@ -237,12 +49,6 @@ bool MainWindow::save(){
     layout_0->addWidget(FindWhole_CheckBox);
     layout_0->addWidget(FindCase_CheckBox);
     */
-<<<<<<< HEAD
->>>>>>> upstream/master
-||||||| merged common ancestors
->>>>>>>>> Temporary merge branch 2
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
 
     QVBoxLayout *layout_2= new QVBoxLayout(findDlg);//将一个行编辑器和一个按钮放到上面，并使用布局管理器进行布局。
     layout_2->addWidget(findLineEdit);
@@ -362,7 +168,7 @@ void MainWindow::loadtree(const QString &fileName){//加载当前文件的目录
 
     ui->treeWidget->clear();//先清空之前的内容
     //创建目录根项
-    //QString rootpath=QFileInfo(fileName).path();//获取绝对路径如"F:/qt/homework"    调用这个函数会让文件夹向上一级
+    //QString rootpath=QFileInfo(fileName).path();//获取绝对路径如"F:/qt/homework",调用这个函数会让文件夹向上一级
     QString rootpath=fileName;
     current_url=rootpath;//获取当前的url
     qDebug() << rootpath;
@@ -467,30 +273,30 @@ void MainWindow::showFindText()//在当前打开文本中查找
     if(FindBack_CheckBox->isChecked()){
         if(FindWhole_CheckBox->isChecked()){
             if(FindCase_CheckBox->isChecked()){
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
-                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindWholeWords))
+                {
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
                 }
             }
         }
         else if(FindCase_CheckBox->isChecked()){
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
-                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward|QTextDocument::FindCaseSensitively))
+                {
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward))//用来指定查找的方式。可以使用“|”符号来一起使用
-                {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindBackward))
+                {
                    QMessageBox::warning(this, tr("查找"),
                             tr("找不到%1").arg(str));
                 }
@@ -498,15 +304,15 @@ void MainWindow::showFindText()//在当前打开文本中查找
 
     }
     else if(FindWhole_CheckBox->isChecked()){
-            if(FindCase_CheckBox->isChecked()){
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+            if(FindCase_CheckBox->isChecked()){//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively|QTextDocument::FindWholeWords))
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
                 }
             }
             else{
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindWholeWords))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindWholeWords))
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
@@ -514,7 +320,7 @@ void MainWindow::showFindText()//在当前打开文本中查找
             }
         }
         else if(FindCase_CheckBox->isChecked()){
-                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively))//用来指定查找的方式。可以使用“|”符号来一起使用
+                if (!ui->codeTab->currentEditor()->find(str,QTextDocument::FindCaseSensitively))
                 {//如果不指定该参数，默认的是向前查找、不区分大小写、包含该字符串的词也可以查找到。
                     QMessageBox::warning(this, tr("查找"),
                         tr("找不到%1").arg(str));
@@ -571,145 +377,11 @@ void MainWindow::on_action_visible_triggered()
     //重写文件
     QString file= text.join("\n");//将QStringlist转化为QString
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-//创建新的Tab（用于打开文件）
-void MainWindow::newTab(const QString& fileName, QFile& file)
-{
-    int index = 0;
-    NotePad *notePad = findNewFile(index);
-    if(notePad == NULL)
-    {
-        notePad = new NotePad(config);
-        index = tabWidget->addTab(notePad, QFileInfo(fileName).fileName());
-        addToNotePadMap(index, notePad);
-    }
-    else
-    {
-        notePad->SetNewFile(false);
-        tabWidget->setTabText(index, QFileInfo(fileName).fileName());
-        openedFiles.removeAt(index);
-        newNumber--;
-    }
-    openedFiles << fileName;
-    QByteArray data = file.readAll();
-    notePad->setPlainText(QString::fromLocal8Bit(data));
-    tabWidget->setCurrentIndex(index);
-    setWindowTitle(QFileInfo(fileName).fileName());
-}
-
-//关闭文件（指定文件）
-void MainWindow::fileClose(int index)
-{
-    if(!shouldCloseFile())
-    {
-        return;
-    }
-||||||| merged common ancestors
-=======
-||||||| merged common ancestors
-<<<<<<<<< Temporary merge branch 1
-//创建新的Tab（用于打开文件）
-void MainWindow::newTab(const QString& fileName, QFile& file)
-{
-    int index = 0;
-    NotePad *notePad = findNewFile(index);
-    if(notePad == NULL)
-    {
-        notePad = new NotePad(config);
-        index = tabWidget->addTab(notePad, QFileInfo(fileName).fileName());
-        addToNotePadMap(index, notePad);
-    }
-    else
-    {
-        notePad->SetNewFile(false);
-        tabWidget->setTabText(index, QFileInfo(fileName).fileName());
-        openedFiles.removeAt(index);
-        newNumber--;
-    }
-    openedFiles << fileName;
-    QByteArray data = file.readAll();
-    notePad->setPlainText(QString::fromLocal8Bit(data));
-    tabWidget->setCurrentIndex(index);
-    setWindowTitle(QFileInfo(fileName).fileName());
-}
-
-//关闭文件（指定文件）
-void MainWindow::fileClose(int index)
-{
-    if(!shouldCloseFile())
-    {
-        return;
-    }
-||||||||| merged common ancestors
-=========
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
     //清空注释list和对应的int数组
     zhushi.clear();
     size=0;
-<<<<<<< HEAD
->>>>>>> upstream/master
-||||||| merged common ancestors
->>>>>>>>> Temporary merge branch 2
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    if (maybeSave(index))
-    {
-        if (openedFiles.count() == 1)
-        {
-            openedFiles.clear();
-            QString fileName = "New 1";
-            openedFiles << fileName;
-            mapNotePads[0]->setPlainText("");
-            mapNotePads[0]->SetNewFile(true);
-            tabWidget->setTabText(0, fileName);
-            setWindowTitle(fileName);
-            newNumber = 1;
-        }
-        else
-        {
-            openedFiles.removeAt(index);
-            tabWidget->removeTab(index);
-            removeFromNotePadMap(index);
-            newNumber--;
-        }
-    }
-}
-||||||| merged common ancestors
-=======
-||||||| merged common ancestors
-<<<<<<<<< Temporary merge branch 1
-    if (maybeSave(index))
-    {
-        if (openedFiles.count() == 1)
-        {
-            openedFiles.clear();
-            QString fileName = "New 1";
-            openedFiles << fileName;
-            mapNotePads[0]->setPlainText("");
-            mapNotePads[0]->SetNewFile(true);
-            tabWidget->setTabText(0, fileName);
-            setWindowTitle(fileName);
-            newNumber = 1;
-        }
-        else
-        {
-            openedFiles.removeAt(index);
-            tabWidget->removeTab(index);
-            removeFromNotePadMap(index);
-            newNumber--;
-        }
-    }
-}
-||||||||| merged common ancestors
-=========
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
-    /*调整与更新！！！！超重要！！！*/
+    //调整与更新！！！！超重要！！！
     document->adjustSize();
     ui->codeTab->currentEditor()->update();
 }
@@ -724,60 +396,97 @@ void MainWindow::on_action_unvisible_triggered()
         QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
 
         if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
-            int j=i;
-            for(;j<row_num;j++){
-                QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
-                if(str_j.contains("*/")){
-                    break;
+            QString cur="/*";
+            QString str_2=str.trimmed();//去掉字符串首尾空格
+            int m=str_2.indexOf(cur);//返回‘//’在str中的索引下标
+            QString ss=str.mid(0,m);//取代码部分
+            if(m<1){
+                int j=i;
+                for(;j<row_num;j++){
+                    QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
+                    if(str_j.contains("*/")){
+                        break;
+                    }
                 }
+                i=j;
+                continue;
             }
-            i=j;
-            continue;
         }
         QString cur="//";
         if(str.contains(cur)){//如果包含“//”字符串的话
             QString str_2=str.trimmed();//去掉字符串首尾空格
-            if(str_2.startsWith(cur)){//整行都是注释,直接隐藏掉这一行
+            if(str_2.startsWith("//")){//整行都是注释,直接隐藏掉这一行
                 continue;
             }
             else {//把注释删掉并存起来
-                int j=str.indexOf(cur);//返回‘//’在str中的索引下标
-                QString ss=str.mid(0,j);//取代码部分
-                daima.append(ss);
-                QString s=str.mid(j);//取注释
-                zhushi.append(s);
-                zhushi_hang[size]=i;
-                size++;
-                //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
+                int j=str.indexOf('/');//返回‘//’在str中的索引下标
+                if(str[j-1]=='"'){
+                    QString y=str.mid(j+2);
+                    if(y.contains(cur)){
+                        int p=y.indexOf('/');
+                        QString ss=str.mid(0,p+j+2);//取代码部分
+                        daima.append(ss);
+                        QString s=str.mid(p+j+2);//取注释
+                        zhushi.append(s);
+                        zhushi_hang[size]=i;
+                        size++;
+                        //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
 
-                //将光标跳到指定行
-                QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
-                int toPost =document->findBlockByNumber(i).position();
-                tc.setPosition(toPost,QTextCursor::MoveAnchor);
-                ui->codeTab->currentEditor()->setTextCursor(tc);
-                //删除光标所在行
-                tc.select(QTextCursor::BlockUnderCursor);
-                tc.removeSelectedText();
-                ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
+                        //将光标跳到指定行
+                        QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
+                        int toPost =document->findBlockByNumber(i).position();
+                        tc.setPosition(toPost,QTextCursor::MoveAnchor);
+                        ui->codeTab->currentEditor()->setTextCursor(tc);
+                        //删除光标所在行
+                        tc.select(QTextCursor::BlockUnderCursor);
+                        tc.removeSelectedText();
+                        ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
+                    }
+                    else continue;//在代码内部的//不进行操作
+                }
+                else{
+                    QString ss=str.mid(0,j);//取代码部分
+                    daima.append(ss);
+                    QString s=str.mid(j);//取注释
+                    zhushi.append(s);
+                    zhushi_hang[size]=i;
+                    size++;
+                    //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
+
+                    //将光标跳到指定行
+                    QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
+                    int toPost =document->findBlockByNumber(i).position();
+                    tc.setPosition(toPost,QTextCursor::MoveAnchor);
+                    ui->codeTab->currentEditor()->setTextCursor(tc);
+                    //删除光标所在行
+                    tc.select(QTextCursor::BlockUnderCursor);
+                    tc.removeSelectedText();
+                    ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
+                }
             }
         }
     }
     for(int i=0;i<row_num;i++){
         QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
         if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
-            int j=i;
-            for(;j<row_num;j++){
-                QString str_j = document->findBlockByLineNumber(j).text(); //获取第i行的内容
-                if(str_j.contains("*/")){
-                    break;
+            QString cur="/*";
+            QString str_2=str.trimmed();//去掉字符串首尾空格
+            int m=str_2.indexOf(cur);//返回在str中的索引下标
+            if(m<1){
+                int j=i;
+                for(;j<row_num;j++){
+                    QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
+                    if(str_j.contains("*/")){
+                        break;
+                    }
                 }
+                for(int mm=i;mm<=j;mm++){//隐掉段落注释
+                    QTextBlock oTextBlock = document->findBlockByNumber(mm);
+                    oTextBlock.setVisible(false);
+                }
+                i=j;
+                continue;
             }
-            for(int m=i;m<=j;m++){//隐掉段落注释
-                QTextBlock oTextBlock = document->findBlockByNumber(m);
-                oTextBlock.setVisible(false);
-            }
-            i=j;
-            continue;
         }
         if(str.contains("//")){//如果包含“//”字符串的话
             QString str_2=str.trimmed();//去掉字符串首尾空格
@@ -787,7 +496,7 @@ void MainWindow::on_action_unvisible_triggered()
             }
         }
     }
-    /*调整与更新！！！！超重要！！！*/
+    //调整与更新！！！！超重要！！！
     document->adjustSize();
     ui->codeTab->currentEditor()->update();
 }
@@ -806,9 +515,3 @@ void MainWindow::splitter(){
     mainSplitter->show();
 }
 */
-<<<<<<< HEAD
->>>>>>> upstream/master
-||||||| merged common ancestors
->>>>>>>>> Temporary merge branch 2
-=======
->>>>>>> 253e1f610b35c168bf1f2edfa4378d4d08385c4c
