@@ -41,6 +41,14 @@ Highlighter::Highlighter(QTextDocument *parent)
     rule.format = functionFormat;
     highlightingRules.append(rule);
 
+    //else, else if 单独列出来
+    rule.pattern=QRegularExpression(QStringLiteral("\\belse\\b"));
+    rule.format=functionFormat;
+    highlightingRules.append(rule);
+    rule.pattern=QRegularExpression(QStringLiteral("\\belse[ ]+if\\b"));
+    rule.format=functionFormat;
+    highlightingRules.append(rule);
+
     singleLineCommentFormat.setForeground(Qt::red);
     rule.pattern = QRegularExpression(QStringLiteral("//[^\n]*"));
     rule.format = singleLineCommentFormat;

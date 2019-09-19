@@ -8,6 +8,7 @@
 #include <QSplitter>
 #include <QDialog>
 #include <QTextDocument>
+#include <QFileSystemModel>
 
 namespace Ui {
 class MainWindow;
@@ -29,8 +30,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    QFileInfoList allfile(QTreeWidgetItem *root,QString path);//遍历目录
-    void loadtree(const QString &fileName);//显示目录树
 
     void splitter();//分割窗体
 
@@ -55,8 +54,6 @@ private slots:
 
     void on_action_open_files_triggered();//打开文件夹
 
-    void showSelectedDocument(QTreeWidgetItem * item, int column); //双击目录树中的文件显示文件内容事件
-
     void showFindText();//与查找信号连接的槽
     void on_action_Find_triggered();//与点击查找按钮或快捷键信号连接的槽
 
@@ -64,8 +61,12 @@ private slots:
     void on_action_unvisible_triggered();//注释的隐藏
 
 
+    void on_treeView_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
+    QFileSystemModel * dirModel;
+
     //为真：未保存过；为假：保存过
     bool isUntitled;
     //保存当前文件的路径
