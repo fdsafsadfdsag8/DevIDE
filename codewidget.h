@@ -4,6 +4,7 @@
 #include <QWidget>
 #include"codeeditor.h"
 #include<QVBoxLayout>
+#include<QCompleter>
 
 class CodeWidget: public QWidget
 {
@@ -19,6 +20,8 @@ public:
     void beTitled();
 private:
     bool titled;
+
+    QCompleter* completer;
 };
 
 #endif // CODEWIDGET_H
