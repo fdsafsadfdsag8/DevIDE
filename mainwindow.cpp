@@ -396,6 +396,16 @@ void MainWindow::on_action_unvisible_triggered()
         QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
 
         if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
+
+            int j=str.indexOf("/*");//返回‘/*’在str中的索引下标
+            if(str.contains("*/")){
+                int jj=str.indexOf("*/");//返回‘*/’在str中的索引下标
+                QString q=str.mid(0,j);
+                QString p=str.mid(jj);
+                if(q.contains('"')&&p.contains('"')){
+
+                }
+            }
             QString cur="/*";
             QString str_2=str.trimmed();//去掉字符串首尾空格
             int m=str_2.indexOf(cur);//返回‘//’在str中的索引下标
@@ -420,13 +430,37 @@ void MainWindow::on_action_unvisible_triggered()
             }
             else {//把注释删掉并存起来
                 int j=str.indexOf('/');//返回‘//’在str中的索引下标
-                if(str[j-1]=='"'){
-                    QString y=str.mid(j+2);
-                    if(y.contains(cur)){
-                        int p=y.indexOf('/');
-                        QString ss=str.mid(0,p+j+2);//取代码部分
+                if(str.contains('"')){//有引号
+                    QString a=str.mid(0,j);
+                    QString b=str.mid(j);
+                    if(a.contains('"')&&b.contains('"')){//注释在引号里面,作为字符串
+                        int w=b.indexOf('"');
+                        QString ww=b.mid(w);
+                        if(ww.contains("//")){//引号后面有注释
+                            int p=ww.indexOf('/');
+                            QString ss=str.mid(0,p+j+w);//取代码部分
+                            daima.append(ss);
+                            QString s=str.mid(p+j+w);//取注释
+                            zhushi.append(s);
+                            zhushi_hang[size]=i;
+                            size++;
+                            //需要再把这一行更改后的结果重新写到textedit吗？？？？!!!!!需要!!!!
+
+                            //将光标跳到指定行
+                            QTextCursor tc = ui->codeTab->currentEditor()->textCursor();
+                            int toPost =document->findBlockByNumber(i).position();
+                            tc.setPosition(toPost,QTextCursor::MoveAnchor);
+                            ui->codeTab->currentEditor()->setTextCursor(tc);
+                            //删除光标所在行
+                            tc.select(QTextCursor::BlockUnderCursor);
+                            tc.removeSelectedText();
+                            ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
+                        }
+                    }
+                    else {
+                        QString ss=str.mid(0,j);//取代码部分
                         daima.append(ss);
-                        QString s=str.mid(p+j+2);//取注释
+                        QString s=str.mid(j);//取注释
                         zhushi.append(s);
                         zhushi_hang[size]=i;
                         size++;
@@ -442,9 +476,8 @@ void MainWindow::on_action_unvisible_triggered()
                         tc.removeSelectedText();
                         ui->codeTab->currentEditor()->insertPlainText("\n"+ss);
                     }
-                    else continue;//在代码内部的//不进行操作
                 }
-                else{
+                else{//整行无引号
                     QString ss=str.mid(0,j);//取代码部分
                     daima.append(ss);
                     QString s=str.mid(j);//取注释
@@ -469,23 +502,51 @@ void MainWindow::on_action_unvisible_triggered()
     for(int i=0;i<row_num;i++){
         QString str = document->findBlockByLineNumber(i).text(); //获取第i行的内容
         if(str.contains("/*")){//如果包含“/*”(段落注释)字符串的话
-            QString cur="/*";
-            QString str_2=str.trimmed();//去掉字符串首尾空格
-            int m=str_2.indexOf(cur);//返回在str中的索引下标
-            if(m<1){
-                int j=i;
-                for(;j<row_num;j++){
-                    QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
-                    if(str_j.contains("*/")){
-                        break;
+            if(str.contains("*/")){
+                int jj=str.indexOf("*/");//返回‘*/’在str中的索引下标
+                QString q=str.mid(0,str.indexOf("/*"));
+                QString p=str.mid(jj);
+                if(q.contains('"')&&p.contains('"'));
+                else{
+                    QString cur="/*";
+                    QString str_2=str.trimmed();//去掉字符串首尾空格
+                    int m=str_2.indexOf(cur);//返回在str中的索引下标
+                    if(m<1){
+                        int j=i;
+                        for(;j<row_num;j++){
+                            QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
+                            if(str_j.contains("*/")){
+                                break;
+                            }
+                        }
+                        for(int mm=i;mm<=j;mm++){//隐掉段落注释
+                            QTextBlock oTextBlock = document->findBlockByNumber(mm);
+                            oTextBlock.setVisible(false);
+                        }
+                        i=j;
+                        continue;
                     }
                 }
-                for(int mm=i;mm<=j;mm++){//隐掉段落注释
-                    QTextBlock oTextBlock = document->findBlockByNumber(mm);
-                    oTextBlock.setVisible(false);
+            }
+            else{
+                QString cur="/*";
+                QString str_2=str.trimmed();//去掉字符串首尾空格
+                int m=str_2.indexOf(cur);//返回在str中的索引下标
+                if(m<1){
+                    int j=i;
+                    for(;j<row_num;j++){
+                        QString str_j = document->findBlockByLineNumber(j).text(); //获取第j行的内容
+                        if(str_j.contains("*/")){
+                            break;
+                        }
+                    }
+                    for(int mm=i;mm<=j;mm++){//隐掉段落注释
+                        QTextBlock oTextBlock = document->findBlockByNumber(mm);
+                        oTextBlock.setVisible(false);
+                    }
+                    i=j;
+                    continue;
                 }
-                i=j;
-                continue;
             }
         }
         if(str.contains("//")){//如果包含“//”字符串的话
