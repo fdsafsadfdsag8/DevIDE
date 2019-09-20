@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.9.1, 2019-09-19T17:32:36. -->
+||||||| merged common ancestors
+<!-- Written by QtCreator 4.9.1, 2019-09-19T07:34:37. -->
+=======
+>>>>>>> 4b7e674775581e021822daece5d942bf7ce85aa4
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>

@@ -23,7 +23,8 @@ public:
     QString& currentFile();
     CodeEditor* currentEditor();
     CodeWidget* currentTab();
-
+private slots:
+    void close(int index);
 
 };
 
